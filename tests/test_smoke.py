@@ -11,8 +11,8 @@ import pandas as pd
 import numpy as np
 import pytest
 
-from data.db import _SCHEMA, _INDEXES
-from data.universe import seed_from_csv
+from data.db import _SCHEMA, _INDEXES, ensure_column
+from data.universe import seed_from_csv, normalize_yahoo_symbol
 from data.loader import load_price_dfs
 from compute.indicators import add_sma, add_atr, add_momentum, is_uptrend
 from scanners.pullback import scan, scan_universe
@@ -30,6 +30,11 @@ def mem_db() -> sqlite3.Connection:
     conn = sqlite3.connect(":memory:")
     conn.executescript(_SCHEMA)
     conn.executescript(_INDEXES)
+    # Apply same column migrations as init_schema()
+    ensure_column(conn, "macro_series", "open",   "REAL")
+    ensure_column(conn, "macro_series", "high",   "REAL")
+    ensure_column(conn, "macro_series", "low",    "REAL")
+    ensure_column(conn, "prices",       "source", "TEXT DEFAULT 'yfinance'")
     return conn
 
 
@@ -75,7 +80,10 @@ def test_schema_creates_all_tables(mem_db):
     tables = {r[0] for r in mem_db.execute(
         "SELECT name FROM sqlite_master WHERE type='table'"
     ).fetchall()}
-    expected = {"universe", "prices", "corporate_actions", "macro_series", "breadth_daily", "scanner_hits"}
+    expected = {
+        "universe", "prices", "corporate_actions", "macro_series",
+        "breadth_daily", "scanner_hits", "data_quality_checks", "run_log",
+    }
     assert expected.issubset(tables), f"Missing tables: {expected - tables}"
 
 
@@ -345,3 +353,94 @@ def test_industry_section_html_renders(mem_db):
 
 def test_industry_section_html_empty(mem_db):
     assert _industry_section_html([]) == ""
+
+
+# ---------------------------------------------------------------------------
+# Symbol normalisation
+# ---------------------------------------------------------------------------
+
+def test_normalize_yahoo_symbol():
+    assert normalize_yahoo_symbol("MOG.A")  == "MOG-A"
+    assert normalize_yahoo_symbol("BRK.B")  == "BRK-B"
+    assert normalize_yahoo_symbol("AAPL")   == "AAPL"
+
+
+def test_seed_normalizes_dot_tickers(mem_db, tmp_path):
+    csv_file = tmp_path / "mini.csv"
+    csv_file.write_text("ticker,gics_sector\nMOG.A,Industrials\nBRK.B,Financials\n")
+    seed_from_csv(str(csv_file), mem_db)
+    tickers = {r[0] for r in mem_db.execute("SELECT ticker FROM universe").fetchall()}
+    assert "MOG-A" in tickers, "MOG.A must be normalised to MOG-A"
+    assert "BRK-B" in tickers, "BRK.B must be normalised to BRK-B"
+    assert "MOG.A" not in tickers
+    assert "BRK.B" not in tickers
+
+
+# ---------------------------------------------------------------------------
+# ensure_column
+# ---------------------------------------------------------------------------
+
+def test_ensure_column_adds_column(mem_db):
+    ensure_column(mem_db, "universe", "test_col_add", "INTEGER DEFAULT 0")
+    cols = {row[1] for row in mem_db.execute("PRAGMA table_info(universe)")}
+    assert "test_col_add" in cols
+
+
+def test_ensure_column_idempotent(mem_db):
+    ensure_column(mem_db, "universe", "idem_col", "TEXT")
+    ensure_column(mem_db, "universe", "idem_col", "TEXT")  # second call must not raise
+    cols = {row[1] for row in mem_db.execute("PRAGMA table_info(universe)")}
+    assert "idem_col" in cols
+
+
+def test_macro_series_has_ohl_columns(mem_db):
+    cols = {row[1] for row in mem_db.execute("PRAGMA table_info(macro_series)")}
+    assert {"open", "high", "low"}.issubset(cols)
+
+
+def test_prices_has_source_column(mem_db):
+    cols = {row[1] for row in mem_db.execute("PRAGMA table_info(prices)")}
+    assert "source" in cols
+
+
+# ---------------------------------------------------------------------------
+# data quality + run log
+# ---------------------------------------------------------------------------
+
+def test_log_quality_writes_row(mem_db):
+    from data.quality import log_quality
+    log_quality(mem_db, "test_check", "ok", "all good")
+    row = mem_db.execute(
+        "SELECT check_name, status, message FROM data_quality_checks"
+    ).fetchone()
+    assert row == ("test_check", "ok", "all good")
+
+
+def test_log_run_writes_row(mem_db):
+    from data.quality import log_run
+    log_run(mem_db, "test_step", "ok", "step done")
+    row = mem_db.execute(
+        "SELECT step, status, message FROM run_log"
+    ).fetchone()
+    assert row == ("test_step", "ok", "step done")
+
+
+# ---------------------------------------------------------------------------
+# Mock price generation
+# ---------------------------------------------------------------------------
+
+def test_mock_prices_deterministic():
+    from data.loader import _mock_prices_for_tickers
+    r1 = _mock_prices_for_tickers(["AAPL"], days=50)
+    r2 = _mock_prices_for_tickers(["AAPL"], days=50)
+    pd.testing.assert_frame_equal(r1["AAPL"], r2["AAPL"])
+
+
+def test_mock_prices_valid_ohlc():
+    from data.loader import _mock_prices_for_tickers
+    df = _mock_prices_for_tickers(["TEST"], days=100)["TEST"]
+    assert len(df) == 100
+    assert (df["high"] >= df["close"]).all(), "high must be >= close"
+    assert (df["close"] >= df["low"]).all(),  "close must be >= low"
+    assert (df["low"] > 0).all(),             "low must be positive"
+    assert (df["volume"] > 0).all()

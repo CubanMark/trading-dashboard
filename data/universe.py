@@ -31,6 +31,11 @@ SECTOR_ETFS = [
 ]
 
 
+def normalize_yahoo_symbol(ticker: str) -> str:
+    """Convert dot-notation tickers to yfinance dash notation (MOG.A → MOG-A)."""
+    return ticker.replace(".", "-")
+
+
 def load(conn: Optional[sqlite3.Connection] = None) -> pd.DataFrame:
     c = conn or connect()
     df = pd.read_sql("SELECT * FROM universe WHERE active = 1", c)
@@ -111,6 +116,7 @@ def seed_sp400_sp600(
 
             # Clean ticker (some Wikipedia pages have footnote refs like "AAPL[1]")
             df["ticker"] = df["ticker"].astype(str).str.replace(r"\[.*?\]", "", regex=True).str.strip()
+            df["ticker"] = df["ticker"].apply(normalize_yahoo_symbol)
             df = df[df["ticker"].str.match(r"^[A-Z.\-]{1,10}$")]  # basic sanity filter
 
             flags = index_flags[index_key]
@@ -162,6 +168,9 @@ def seed_from_csv(
         "security":        "name",
         "gics_sub_industry": "gics_sub_industry",  # already correct
     })
+
+    # Normalize dot-notation tickers to yfinance dash notation (MOG.A → MOG-A)
+    df["ticker"] = df["ticker"].astype(str).apply(normalize_yahoo_symbol)
 
     # gics_industry is absent in the Swing Lab CSV – derive coarsely from sub_industry
     # (will be enriched later if needed; NULL is acceptable for Phase 1)

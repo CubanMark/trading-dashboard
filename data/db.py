@@ -75,6 +75,24 @@ CREATE TABLE IF NOT EXISTS scanner_hits (
     earnings_date TEXT,
     UNIQUE (date, ticker, scanner)
 );
+
+-- Data quality check log (persistent DQ results per pipeline run)
+CREATE TABLE IF NOT EXISTS data_quality_checks (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    checked_at  TEXT NOT NULL,
+    check_name  TEXT NOT NULL,
+    status      TEXT NOT NULL,   -- ok | warning | error
+    message     TEXT NOT NULL
+);
+
+-- Pipeline step execution log
+CREATE TABLE IF NOT EXISTS run_log (
+    id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    run_at   TEXT NOT NULL,
+    step     TEXT NOT NULL,
+    status   TEXT NOT NULL,
+    message  TEXT NOT NULL
+);
 """
 
 _INDEXES = """
@@ -82,6 +100,14 @@ CREATE INDEX IF NOT EXISTS idx_prices_ticker ON prices (ticker);
 CREATE INDEX IF NOT EXISTS idx_prices_date   ON prices (date);
 CREATE INDEX IF NOT EXISTS idx_hits_date     ON scanner_hits (date);
 """
+
+
+def ensure_column(conn: sqlite3.Connection, table: str, column: str, definition: str) -> None:
+    """Add column to table if it doesn't already exist. Safe to call multiple times."""
+    existing = {row[1] for row in conn.execute(f"PRAGMA table_info({table})")}
+    if column not in existing:
+        conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
+        conn.commit()
 
 
 def connect() -> sqlite3.Connection:
@@ -93,6 +119,12 @@ def connect() -> sqlite3.Connection:
 
 
 def init_schema() -> None:
-    with connect() as conn:
-        conn.executescript(_SCHEMA)
-        conn.executescript(_INDEXES)
+    conn = connect()
+    conn.executescript(_SCHEMA)
+    conn.executescript(_INDEXES)
+    # Column migrations for existing databases
+    ensure_column(conn, "macro_series", "open",   "REAL")
+    ensure_column(conn, "macro_series", "high",   "REAL")
+    ensure_column(conn, "macro_series", "low",    "REAL")
+    ensure_column(conn, "prices",       "source", "TEXT DEFAULT 'yfinance'")
+    conn.close()

@@ -14,11 +14,13 @@ from datetime import date, timedelta
 from typing import Optional
 import sqlite3
 
+import numpy as np
 import pandas as pd
 import yfinance as yf
 
 from data import universe as uni
 from data import fred_client
+from data.quality import log_quality
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +59,16 @@ def run_update(conn: sqlite3.Connection) -> None:
         logger.info("Bulk load from %s for %d tickers", bulk_start, len(bulk_tickers))
         _fetch_prices(conn, bulk_tickers, bulk_start)
 
+        # Mock fallback for tickers still without any stored data
+        stored_after = set(_last_stored_dates(conn).keys())
+        still_missing = [t for t in bulk_tickers if t not in stored_after]
+        if still_missing:
+            logger.warning(
+                "Mock fallback for %d tickers without yfinance data: %s ...",
+                len(still_missing), still_missing[:5],
+            )
+            _store_mock_prices(conn, _mock_prices_for_tickers(still_missing))
+
     if incr_tickers:
         incr_start = str(today - timedelta(days=7))
         logger.info("Incremental update from %s for %d tickers", incr_start, len(incr_tickers))
@@ -69,6 +81,52 @@ def run_update(conn: sqlite3.Connection) -> None:
         else str(today - timedelta(days=7))
     )
     fetch_macro(conn, macro_start)
+
+    # --- Persistent DQ checks ---
+    today_str  = str(today)
+    thirty_ago = str(today - timedelta(days=30))
+
+    n_today = conn.execute(
+        "SELECT COUNT(*) FROM prices WHERE date=?", (today_str,)
+    ).fetchone()[0]
+    log_quality(conn, "prices_present",
+                "ok" if n_today > 0 else "warning",
+                f"{n_today} rows for {today_str}")
+
+    active = conn.execute("SELECT COUNT(*) FROM universe WHERE active=1").fetchone()[0]
+    priced = conn.execute(
+        "SELECT COUNT(DISTINCT ticker) FROM prices WHERE date=?", (today_str,)
+    ).fetchone()[0]
+    pct = round(priced / active * 100, 1) if active else 0.0
+    log_quality(conn, "universe_coverage",
+                "ok" if pct >= 90 else ("warning" if pct >= 70 else "error"),
+                f"{priced}/{active} ({pct}%) tickers priced for {today_str}")
+
+    bad = conn.execute(
+        "SELECT COUNT(*) FROM prices WHERE close <= 0 OR high <= 0 OR low <= 0"
+    ).fetchone()[0]
+    log_quality(conn, "nonpositive_prices",
+                "ok" if bad == 0 else "warning",
+                f"{bad} rows with nonpositive OHLC")
+
+    extreme = conn.execute(
+        """SELECT COUNT(*) FROM (
+               SELECT close, LAG(close) OVER (PARTITION BY ticker ORDER BY date) AS prev
+               FROM prices WHERE date >= ?
+           ) sub
+           WHERE sub.prev > 0 AND ABS(sub.close / sub.prev - 1) > 0.5""",
+        (thirty_ago,),
+    ).fetchone()[0]
+    log_quality(conn, "extreme_returns",
+                "ok" if extreme == 0 else "warning",
+                f"{extreme} days with >50% move in last 30 days")
+
+    mock_ct = conn.execute(
+        "SELECT COUNT(*) FROM prices WHERE source='mock-fallback'"
+    ).fetchone()[0]
+    log_quality(conn, "fetch_source",
+                "ok" if mock_ct == 0 else "warning",
+                f"{mock_ct} mock-fallback rows in prices")
 
 
 def fetch_macro(conn: sqlite3.Connection, start: str) -> None:
@@ -93,10 +151,16 @@ def fetch_macro(conn: sqlite3.Connection, start: str) -> None:
                 continue
             for dt, row in df.iterrows():
                 if pd.notna(row.get("close")):
-                    rows.append((ticker, str(dt.date()), float(row["close"])))
+                    rows.append((
+                        ticker, str(dt.date()), float(row["close"]),
+                        float(row["open"]) if pd.notna(row.get("open")) else None,
+                        float(row["high"]) if pd.notna(row.get("high")) else None,
+                        float(row["low"])  if pd.notna(row.get("low"))  else None,
+                    ))
 
         conn.executemany(
-            "INSERT OR IGNORE INTO macro_series (series_id, date, value) VALUES (?,?,?)",
+            "INSERT OR IGNORE INTO macro_series"
+            " (series_id, date, value, open, high, low) VALUES (?,?,?,?,?,?)",
             rows,
         )
         conn.commit()
@@ -265,6 +329,55 @@ def _last_stored_dates(conn: sqlite3.Connection) -> dict[str, str]:
         "SELECT ticker, MAX(date) AS last_date FROM prices GROUP BY ticker", conn
     )
     return dict(zip(df["ticker"], df["last_date"]))
+
+
+def _mock_prices_for_tickers(
+    tickers: list[str],
+    days: int = 400,
+) -> dict[str, pd.DataFrame]:
+    """Generate deterministic synthetic OHLCV for offline/CI fallback.
+
+    Seed derived from ticker characters so results are stable across Python sessions.
+    """
+    end = date.today()
+    dates = pd.bdate_range(end=end, periods=days).strftime("%Y-%m-%d")
+    result: dict[str, pd.DataFrame] = {}
+    for ticker in tickers:
+        # Stable cross-session seed: weighted char-code sum
+        seed = sum(ord(c) * (i + 1) for i, c in enumerate(ticker)) % (2**31)
+        rng = np.random.default_rng(seed)
+        close = 50.0 * np.cumprod(1 + rng.normal(0, 0.01, days))
+        daily_range = rng.uniform(0.005, 0.015, days)
+        high   = close * (1 + daily_range)
+        low    = close * (1 - daily_range)
+        open_  = low + rng.random(days) * (high - low)
+        volume = rng.integers(500_000, 5_000_000, days).astype(float)
+        df = pd.DataFrame(
+            {"open": open_, "high": high, "low": low, "close": close, "volume": volume},
+            index=pd.Index(dates, name="date"),
+        )
+        result[ticker] = df
+    return result
+
+
+def _store_mock_prices(conn: sqlite3.Connection, mock_dfs: dict[str, pd.DataFrame]) -> None:
+    """Store synthetic price data tagged with source='mock-fallback'."""
+    total = 0
+    for ticker, df in mock_dfs.items():
+        rows = [
+            (ticker, d, float(r["open"]), float(r["high"]),
+             float(r["low"]), float(r["close"]), int(r["volume"]), "mock-fallback")
+            for d, r in df.iterrows()
+        ]
+        conn.executemany(
+            "INSERT OR IGNORE INTO prices"
+            " (ticker, date, open, high, low, close, volume, source)"
+            " VALUES (?,?,?,?,?,?,?,?)",
+            rows,
+        )
+        total += len(rows)
+    conn.commit()
+    logger.info("Stored %d mock price rows for %d tickers", total, len(mock_dfs))
 
 
 def _sanity_check(df: pd.DataFrame, ticker: str) -> list[str]:

@@ -9,6 +9,7 @@ from data.db import connect, init_schema
 from data import universe as uni
 from data.universe import seed_sp400_sp600
 from data import loader
+from data.quality import log_run
 from compute import breadth
 from compute.indicators import add_rs, rs_rank as compute_rs_rank
 from render import homepage
@@ -34,6 +35,17 @@ def main() -> None:
     init_schema()
 
     with connect() as conn:
+        # --- Step 0: one-time migration — deactivate old dot-notation tickers ---
+        dot_count = conn.execute(
+            "SELECT COUNT(*) FROM universe WHERE ticker LIKE '%.%' AND active=1"
+        ).fetchone()[0]
+        if dot_count > 0:
+            conn.execute("UPDATE universe SET active=0 WHERE ticker LIKE '%.%'")
+            conn.commit()
+            logger.info("Step 0: deactivated %d dot-notation tickers", dot_count)
+            log_run(conn, "step0_migration", "ok",
+                    f"Deactivated {dot_count} dot-notation tickers")
+
         # --- Seed universe (each index checked independently) ---
         sp500_count = conn.execute(
             "SELECT COUNT(*) FROM universe WHERE in_sp500=1"
@@ -58,6 +70,7 @@ def main() -> None:
 
         # --- Step 1+2: Fetch prices + macro (incremental or bulk) ---
         loader.run_update(conn)
+        log_run(conn, "step1_prices", "ok", "Prices and macro updated")
 
         # --- Step 3: Compute breadth ---
         # Use last available trading date (yfinance EOD data lags by 1 day)
@@ -81,6 +94,7 @@ def main() -> None:
             )
         else:
             logger.warning("Breadth computation returned no data for %s", today)
+        log_run(conn, "step3_breadth", "ok", f"Breadth computed for {today}")
 
         # --- Step 4: Run scanners ---
         logger.info("Step 4: loading prices for scanner …")
@@ -145,10 +159,12 @@ def main() -> None:
             )
             conn.commit()
         logger.info("Stored %d scanner hits for %s", len(hit_rows), today)
+        log_run(conn, "step4_scanner", "ok", f"{len(hit_rows)} scanner hits for {today}")
 
         # --- Step 5: Render HTML ---
         homepage.build(conn, today)
         logger.info("Homepage written to pages/index.html")
+        log_run(conn, "step5_render", "ok", "Homepage built")
 
     logger.info("=== Daily build finished ===")
 
