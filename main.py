@@ -7,7 +7,7 @@ import pandas as pd
 
 from data.db import connect, init_schema
 from data import universe as uni
-from data.universe import seed_sp400_sp600
+from data.universe import seed_sp400_sp600, needs_sector_refresh, refresh_sector_industry
 from data import loader
 from data.quality import log_run
 from compute import breadth
@@ -45,6 +45,13 @@ def main() -> None:
             logger.info("Step 0: deactivated %d dot-notation tickers", dot_count)
             log_run(conn, "step0_migration", "ok",
                     f"Deactivated {dot_count} dot-notation tickers")
+
+        # --- Step 0b: one-time sector refresh — replace GICS names with Yahoo Finance names ---
+        if needs_sector_refresh(conn):
+            logger.info("Step 0b: GICS-style sector names detected — refreshing from yfinance.info …")
+            stats = refresh_sector_industry(conn)
+            log_run(conn, "step0b_sector_refresh", "ok",
+                    f"Sector refresh: updated={stats['updated']} skipped={stats['skipped']} errors={stats['errors']}")
 
         # --- Seed universe (each index checked independently) ---
         sp500_count = conn.execute(

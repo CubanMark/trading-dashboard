@@ -15,12 +15,20 @@ _MIN_PRICE    = 5.0
 _MIN_AVG_VOL  = 500_000  # shares
 
 _EXCLUDED_SUB_INDUSTRIES = frozenset({
+    # Biotech / Pharma: binary FDA/trial risk
     "Biotechnology",
-    "Pharmaceuticals",
-    "Health Care Services",
-    "Consumer Staples Merchandise Retail",
-    "Diversified Banks",
-    "Property & Casualty Insurance",
+    "Drug Manufacturers - General",
+    "Drug Manufacturers - Specialty & Generic",
+    # Health care services: regulatory + managed-care risk
+    "Healthcare Plans",
+    "Medical Care Facilities",
+    # Consumer staples retail: defensive, low-beta
+    "Grocery Stores",
+    "Discount Stores",
+    # Banks: rate sensitivity, balance-sheet complexity
+    "Banks - Diversified",
+    # P&C Insurance: catastrophe risk, reserve uncertainty
+    "Insurance - Property & Casualty",
 })
 
 _WARNING = "Research scanner only; not a validated tradable edge."

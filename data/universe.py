@@ -1,5 +1,7 @@
 import logging
 import sqlite3
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from io import StringIO
 from pathlib import Path
 from typing import Optional
@@ -146,6 +148,89 @@ def seed_sp400_sp600(
     if conn is None:
         c.close()
     return inserted
+
+
+# GICS sector names used by Wikipedia / Swing-Lab CSV — absent from Yahoo Finance
+_GICS_SECTOR_NAMES = frozenset({
+    "Information Technology",
+    "Consumer Discretionary",
+    "Consumer Staples",
+    "Financials",
+    "Health Care",
+    "Materials",
+})
+
+
+def needs_sector_refresh(conn: sqlite3.Connection, threshold: int = 10) -> bool:
+    """True if >= threshold active tickers still carry GICS-style sector names (pre-Yahoo refresh)."""
+    placeholders = ",".join("?" * len(_GICS_SECTOR_NAMES))
+    count = conn.execute(
+        f"SELECT COUNT(*) FROM universe WHERE active=1 AND gics_sector IN ({placeholders})",
+        tuple(_GICS_SECTOR_NAMES),
+    ).fetchone()[0]
+    return count >= threshold
+
+
+def refresh_sector_industry(
+    conn: sqlite3.Connection,
+    tickers: list[str] | None = None,
+    max_workers: int = 5,
+) -> dict:
+    """
+    Re-fetch sector + industry from yfinance.info for all active tickers and
+    update universe.gics_sector / gics_sub_industry with Yahoo Finance terminology.
+
+    Fetches in parallel (max_workers threads), writes serially to avoid SQLite
+    thread-safety issues.  Returns {"updated": n, "skipped": n, "errors": n}.
+    """
+    import yfinance as yf
+
+    if tickers is None:
+        tickers = [r[0] for r in conn.execute(
+            "SELECT ticker FROM universe WHERE active=1 ORDER BY ticker"
+        ).fetchall()]
+
+    total = len(tickers)
+    logger.info("Sector refresh: fetching yfinance.info for %d tickers (workers=%d)", total, max_workers)
+
+    def _fetch(ticker: str) -> tuple[str, str, str]:
+        try:
+            info = yf.Ticker(ticker).info
+            return ticker, info.get("sector") or "", info.get("industry") or ""
+        except Exception as exc:
+            logger.debug("yfinance.info failed for %s: %s", ticker, exc)
+            return ticker, "", ""
+
+    results: list[tuple[str, str, str]] = []
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+        futures = {pool.submit(_fetch, t): t for t in tickers}
+        done = 0
+        for future in as_completed(futures):
+            results.append(future.result())
+            done += 1
+            if done % 50 == 0 or done == total:
+                logger.info("Sector refresh: %d/%d fetched", done, total)
+
+    updated = skipped = errors = 0
+    for ticker, sector, industry in results:
+        if not sector:
+            skipped += 1
+            continue
+        try:
+            conn.execute(
+                """UPDATE universe
+                   SET gics_sector=?, gics_sub_industry=?, updated_at=datetime('now')
+                   WHERE ticker=?""",
+                (sector, industry, ticker),
+            )
+            updated += 1
+        except Exception as exc:
+            logger.warning("DB update failed for %s: %s", ticker, exc)
+            errors += 1
+
+    conn.commit()
+    logger.info("Sector refresh done — updated: %d  skipped: %d  errors: %d", updated, skipped, errors)
+    return {"updated": updated, "skipped": skipped, "errors": errors}
 
 
 def seed_from_csv(
