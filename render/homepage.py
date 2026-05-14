@@ -198,6 +198,22 @@ def _get_industry_perf(conn: sqlite3.Connection) -> list[dict]:
     result = result.sort_values("perf_1m", ascending=False).reset_index(drop=True)
     records = result[["industry", "perf_1m", "n"]].to_dict("records")
 
+    # Ticker list per industry (for hover tooltip)
+    try:
+        tdf = pd.read_sql(
+            """SELECT gics_sub_industry AS industry, ticker
+               FROM universe
+               WHERE active=1 AND gics_sub_industry IS NOT NULL AND gics_sub_industry != ''
+               ORDER BY ticker""",
+            conn,
+        )
+        industry_tickers: dict[str, list[str]] = (
+            tdf.groupby("industry")["ticker"].apply(list).to_dict()
+            if not tdf.empty else {}
+        )
+    except Exception:
+        industry_tickers = {}
+
     # Annotate with scanner hit counts (latest scanner date)
     try:
         hdf = pd.read_sql(
@@ -215,7 +231,8 @@ def _get_industry_perf(conn: sqlite3.Connection) -> list[dict]:
         hit_counts = {}
 
     for r in records:
-        r["hits"] = hit_counts.get(r["industry"], 0)
+        r["hits"]    = hit_counts.get(r["industry"], 0)
+        r["tickers"] = industry_tickers.get(r["industry"], [])
 
     return records
 
@@ -393,7 +410,21 @@ nav a.active{{color:#f1f5f9;font-weight:600}}
 .industry-row:last-child{{border-bottom:none}}
 .industry-name{{flex:1;font-size:13px;color:#1e293b;
                 white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-                min-width:0}}
+                min-width:0;position:relative}}
+.industry-name[data-tickers]{{cursor:help;
+    border-bottom:1px dotted #94a3b8}}
+.industry-name[data-tickers]::after{{
+    content:attr(data-tickers);
+    position:absolute;left:0;top:calc(100% + 4px);z-index:200;
+    background:#1e293b;color:#f1f5f9;
+    padding:8px 12px;border-radius:8px;
+    font-size:11px;line-height:1.6;
+    white-space:normal;word-break:break-word;
+    width:280px;
+    opacity:0;pointer-events:none;
+    transition:opacity 0.12s;
+    box-shadow:0 4px 16px rgba(0,0,0,0.35)}}
+.industry-name[data-tickers]:hover::after{{opacity:1}}
 .industry-n{{font-size:11px;color:#94a3b8;white-space:nowrap;flex-shrink:0}}
 .industry-perf{{font-size:13px;font-weight:600;white-space:nowrap;
                 flex-shrink:0;min-width:48px;text-align:right}}
@@ -713,17 +744,31 @@ def _industry_section_html(industries: list[dict]) -> str:
     def rows_html(items: list[dict], color_cls: str) -> str:
         html = ""
         for item in items:
-            perf = item["perf_1m"]
-            sign = "+" if perf >= 0 else ""
-            cls  = "green" if perf >= 0 else "red"
-            hits = item.get("hits", 0)
+            perf    = item["perf_1m"]
+            sign    = "+" if perf >= 0 else ""
+            cls     = "green" if perf >= 0 else "red"
+            hits    = item.get("hits", 0)
+            tickers = item.get("tickers", [])
+
             if hits > 0:
                 hits_html = f'<span class="industry-hits-badge" style="background:#dbeafe;color:#1d4ed8">{hits}</span>'
             else:
                 hits_html = f'<span class="industry-hits-badge" style="background:#f1f5f9;color:#94a3b8">0</span>'
+
+            if tickers:
+                # Build compact tooltip: "AAPL  MSFT  NVDA  ..." in rows of 5
+                rows_of_5 = [
+                    "  ".join(tickers[i:i+5])
+                    for i in range(0, len(tickers), 5)
+                ]
+                tooltip = "&#10;".join(rows_of_5)  # &#10; = newline in HTML attr
+                name_span = f'<span class="industry-name" data-tickers="{tooltip}">{item["industry"]}</span>'
+            else:
+                name_span = f'<span class="industry-name">{item["industry"]}</span>'
+
             html += (
                 f'<div class="industry-row">'
-                f'<span class="industry-name" title="{item["industry"]}">{item["industry"]}</span>'
+                f'{name_span}'
                 f'<span class="industry-n">{int(item["n"])} stocks</span>'
                 f'{hits_html}'
                 f'<span class="industry-perf {cls}">{sign}{perf:.1f}%</span>'
