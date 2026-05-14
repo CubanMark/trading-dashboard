@@ -444,3 +444,111 @@ def test_mock_prices_valid_ohlc():
     assert (df["close"] >= df["low"]).all(),  "close must be >= low"
     assert (df["low"] > 0).all(),             "low must be positive"
     assert (df["volume"] > 0).all()
+
+
+# ---------------------------------------------------------------------------
+# Dimension compute functions
+# ---------------------------------------------------------------------------
+
+def test_compute_breadth_na_on_empty(mem_db):
+    from compute.dimensions import compute_breadth
+    result = compute_breadth(mem_db)
+    assert result["metric_id"] == "breadth"
+    assert result["status"] == "na"
+
+
+def test_compute_breadth_green_above_60(mem_db):
+    from compute.dimensions import compute_breadth
+    mem_db.execute(
+        "INSERT INTO breadth_daily (date, pct_above_50dma, pct_above_200dma) VALUES ('2026-05-14', 65.0, 55.0)"
+    )
+    mem_db.commit()
+    result = compute_breadth(mem_db)
+    assert result["status"] == "green"
+    assert result["value"] == 65.0
+    assert "65.0%" in result["label"]
+
+
+def test_compute_risk_na_without_etfs(mem_db):
+    from compute.dimensions import compute_risk
+    result = compute_risk(mem_db)
+    assert result["metric_id"] == "risk"
+    assert result["status"] == "na"
+
+
+def test_compute_volatility_na_without_data(mem_db):
+    from compute.dimensions import compute_volatility
+    result = compute_volatility(mem_db)
+    assert result["metric_id"] == "volatility"
+    assert result["status"] == "na"
+
+
+def test_compute_volatility_green_below_20(mem_db):
+    from compute.dimensions import compute_volatility
+    mem_db.execute(
+        "INSERT OR IGNORE INTO macro_series (series_id, date, value) VALUES ('^VIX', '2026-05-14', 15.0)"
+    )
+    mem_db.commit()
+    result = compute_volatility(mem_db)
+    assert result["status"] == "green"
+    assert result["value"] == 15.0
+
+
+def test_compute_sentiment_always_na(mem_db):
+    from compute.dimensions import compute_sentiment
+    result = compute_sentiment(mem_db)
+    assert result["status"] == "na"
+    assert result["metric_id"] == "sentiment"
+
+
+def test_compute_credit_na_without_fred(mem_db):
+    from compute.dimensions import compute_credit
+    result = compute_credit(mem_db)
+    assert result["status"] == "na"
+    assert "FRED" in result["note"]
+
+
+def test_compute_all_dimensions_returns_6(mem_db):
+    from compute.dimensions import compute_all_dimensions
+    dims = compute_all_dimensions(mem_db)
+    assert len(dims) == 6
+    metric_ids = {d["metric_id"] for d in dims}
+    assert metric_ids == {"breadth", "risk", "volatility", "obos", "sentiment", "credit"}
+
+
+# ---------------------------------------------------------------------------
+# Dimension pill rendering
+# ---------------------------------------------------------------------------
+
+def test_dimension_pills_renders_6(mem_db):
+    from compute.dimensions import compute_all_dimensions
+    from render.homepage import _dimension_pills_html
+    dims = compute_all_dimensions(mem_db)
+    html = _dimension_pills_html(dims)
+    assert html.count("dim-pill") >= 6
+
+
+def test_dimension_pills_status_classes(mem_db):
+    from render.homepage import _dimension_pills_html
+    dims = [
+        {"metric_id": "test", "label": "50%", "status": "green",
+         "trend": "up", "change_1w": 2.0, "note": "ok"}
+    ]
+    html = _dimension_pills_html(dims)
+    assert "status-green" in html
+    assert "dim-pill-value green" in html
+
+
+# ---------------------------------------------------------------------------
+# Operation summary
+# ---------------------------------------------------------------------------
+
+def test_operation_summary_structure(mem_db):
+    from render.homepage import _get_operation_summary
+    summary = _get_operation_summary(mem_db)
+    assert "last_date" in summary
+    assert "active" in summary
+    assert "priced" in summary
+    assert "has_mock" in summary
+    assert "dq_status" in summary
+    assert summary["has_mock"] is False

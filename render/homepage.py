@@ -54,6 +54,17 @@ _RGB = {
     "gray":   "rgb(148,163,184)",
 }
 
+_DIMENSION_DISPLAY_LABELS: dict[str, str] = {
+    "breadth":    "BREADTH",
+    "risk":       "RISK ON/OFF",
+    "volatility": "VOLATILITY",
+    "obos":       "OB / OS",
+    "sentiment":  "SENTIMENT",
+    "credit":     "CREDIT",
+}
+_TREND_ARROWS: dict[str, str] = {"up": "↑", "down": "↓", "flat": "→"}
+_TREND_COLORS: dict[str, str] = {"up": "green", "down": "red", "flat": "gray"}
+
 
 # ---------------------------------------------------------------------------
 # Public API
@@ -61,12 +72,15 @@ _RGB = {
 
 def build(conn: sqlite3.Connection, build_date: str) -> None:
     """Generate pages/index.html. Called from main.py Step 5."""
-    macro       = _get_macro_strip(conn)
-    breadth     = _get_breadth(conn)
-    sectors     = _get_sector_perf(conn)
-    industries  = _get_industry_perf(conn)
-    hits        = _get_scanner_hits(conn)
-    html        = _render(macro, breadth, sectors, industries, hits, build_date)
+    from compute.dimensions import compute_all_dimensions
+    macro      = _get_macro_strip(conn)
+    breadth_d  = _get_breadth(conn)
+    sectors    = _get_sector_perf(conn)
+    industries = _get_industry_perf(conn)
+    hits       = _get_scanner_hits(conn)
+    dimensions = compute_all_dimensions(conn)
+    op_summary = _get_operation_summary(conn)
+    html       = _render(macro, breadth_d, sectors, industries, hits, dimensions, op_summary, build_date)
     PAGES_DIR.mkdir(parents=True, exist_ok=True)
     (PAGES_DIR / "index.html").write_text(html, encoding="utf-8")
 
@@ -213,6 +227,40 @@ def _get_breadth(conn: sqlite3.Connection) -> Optional[dict]:
     return row
 
 
+def _get_operation_summary(conn: sqlite3.Connection) -> dict:
+    last_date_row = conn.execute("SELECT MAX(date) FROM prices").fetchone()
+    last_date     = last_date_row[0] if last_date_row else None
+
+    active = conn.execute("SELECT COUNT(*) FROM universe WHERE active=1").fetchone()[0]
+    priced = 0
+    if last_date:
+        priced = conn.execute(
+            "SELECT COUNT(DISTINCT ticker) FROM prices WHERE date=?", (last_date,)
+        ).fetchone()[0]
+
+    mock_count = 0
+    try:
+        mock_count = conn.execute(
+            "SELECT COUNT(*) FROM prices WHERE source='mock-fallback'"
+        ).fetchone()[0]
+    except Exception:
+        pass
+
+    latest_dq = conn.execute(
+        "SELECT status FROM data_quality_checks ORDER BY id DESC LIMIT 1"
+    ).fetchone()
+    dq_status = latest_dq[0] if latest_dq else "ok"
+
+    return {
+        "last_date":  last_date or "—",
+        "active":     active,
+        "priced":     priced,
+        "has_mock":   mock_count > 0,
+        "mock_count": mock_count,
+        "dq_status":  dq_status,
+    }
+
+
 # ---------------------------------------------------------------------------
 # HTML assembly
 # ---------------------------------------------------------------------------
@@ -223,14 +271,18 @@ def _render(
     sectors: list[dict],
     industries: list[dict],
     hits: list[dict],
+    dimensions: list[dict],
+    op_summary: dict,
     build_date: str,
 ) -> str:
-    strip           = _index_strip_html(macro)
-    b_tile          = _breadth_tile_html(breadth)
-    sector_sect     = _sector_section_html(sectors)
-    industry_sect   = _industry_section_html(industries)
-    scanner_sect    = _scanner_section_html(hits, build_date)
-    ph              = _placeholder_tile
+    strip          = _index_strip_html(macro)
+    pills          = _dimension_pills_html(dimensions)
+    bspark         = _breadth_sparkline_section_html(breadth)
+    sector_sect    = _sector_section_html(sectors)
+    industry_sect  = _industry_section_html(industries)
+    scanner_sect   = _scanner_section_html(hits, build_date)
+    source_notice  = _source_notice_html(op_summary)
+    op_line        = _operation_summary_line_html(op_summary)
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -250,7 +302,16 @@ nav{{display:flex;gap:16px;flex-wrap:wrap}}
 nav a{{color:#94a3b8;text-decoration:none;font-size:13px}}
 nav a:hover{{color:#f1f5f9}}
 nav a.active{{color:#f1f5f9;font-weight:600}}
-.last-update{{margin-left:auto;color:#64748b;font-size:12px;white-space:nowrap}}
+.header-right{{margin-left:auto;display:flex;flex-direction:column;
+               align-items:flex-end;gap:3px}}
+.op-summary-line{{font-size:11px;color:#64748b;display:flex;gap:6px;align-items:center}}
+.op-summary-line .dq-ok{{color:#16a34a}}
+.op-summary-line .dq-warning{{color:#d97706}}
+.op-summary-line .dq-error{{color:#dc2626}}
+.op-summary-line .mock-warn{{color:#d97706;font-weight:600}}
+.last-update{{color:#64748b;font-size:12px;white-space:nowrap}}
+.source-notice{{background:#fef3c7;border-bottom:1px solid #fde68a;
+                padding:8px 20px;font-size:12px;color:#92400e}}
 .index-strip{{display:flex;gap:10px;padding:12px 20px;
               background:white;border-bottom:1px solid #e2e8f0;flex-wrap:wrap}}
 .idx-card{{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;
@@ -259,27 +320,34 @@ nav a.active{{color:#f1f5f9;font-weight:600}}
             letter-spacing:.5px;text-transform:uppercase}}
 .idx-price{{font-size:22px;font-weight:700;margin:2px 0;color:#0f172a}}
 .idx-change{{font-size:12px;font-weight:600}}
-.main{{padding:16px 20px;display:grid;
-       grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}}
-.tile{{background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px}}
-.tile-label{{font-size:11px;font-weight:700;letter-spacing:1px;
-             text-transform:uppercase;color:#64748b;margin-bottom:10px;
-             display:flex;align-items:center;gap:8px}}
-.tile-big{{font-size:56px;font-weight:800;line-height:1}}
-.tile-sub{{font-size:12px;color:#94a3b8;margin-top:4px}}
-.tile-stats{{display:flex;gap:20px;margin-top:14px}}
-.tile-stat{{display:flex;flex-direction:column;gap:2px}}
-.tile-stat-l{{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.4px}}
-.tile-stat-v{{font-size:14px;font-weight:600;color:#1e293b}}
+.market-state{{display:flex;gap:10px;padding:14px 20px;flex-wrap:wrap;
+               background:#f8fafc;border-bottom:1px solid #e2e8f0}}
+.dim-pill{{background:white;border:1px solid #e2e8f0;border-radius:10px;
+           padding:14px 16px;flex:1;min-width:140px;max-width:260px}}
+.status-green{{border-top:4px solid #16a34a}}
+.status-yellow{{border-top:4px solid #d97706}}
+.status-red{{border-top:4px solid #dc2626}}
+.status-na{{border-top:4px solid #cbd5e1}}
+.dim-pill-label{{font-size:10px;font-weight:700;letter-spacing:1px;
+                 text-transform:uppercase;color:#64748b;margin-bottom:6px}}
+.dim-pill-value{{font-size:17px;font-weight:700;line-height:1.2;margin-bottom:4px;color:#0f172a}}
+.dim-pill-value.green{{color:#16a34a}}
+.dim-pill-value.red{{color:#dc2626}}
+.dim-pill-value.yellow{{color:#d97706}}
+.dim-pill-value.gray{{color:#94a3b8}}
+.dim-pill-trend{{font-size:12px;font-weight:600;margin-bottom:4px}}
+.dim-pill-trend.green{{color:#16a34a}}
+.dim-pill-trend.red{{color:#dc2626}}
+.dim-pill-trend.gray{{color:#94a3b8}}
+.dim-pill-note{{font-size:11px;color:#94a3b8;line-height:1.3}}
+.breadth-spark-row{{padding:4px 20px 0;background:#f8fafc}}
 .pill{{display:inline-flex;align-items:center;padding:2px 8px;border-radius:99px;
        font-size:11px;font-weight:700;letter-spacing:.4px}}
 .pill-green{{background:#dcfce7;color:#15803d}}
 .pill-yellow{{background:#fef9c3;color:#a16207}}
 .pill-red{{background:#fee2e2;color:#b91c1c}}
 .green{{color:#16a34a}}.red{{color:#dc2626}}.yellow{{color:#d97706}}
-.placeholder .tile-big{{color:#cbd5e1;font-size:28px;margin-top:8px}}
-.placeholder .tile-sub{{margin-top:6px}}
-.sector-section{{padding:0 20px 20px}}
+.sector-section{{padding:16px 20px 20px}}
 .sector-tile{{background:white;border:1px solid #e2e8f0;border-radius:12px;padding:16px 20px}}
 .sector-header{{font-size:11px;font-weight:700;letter-spacing:1px;
                 text-transform:uppercase;color:#64748b;margin-bottom:12px}}
@@ -338,19 +406,19 @@ footer{{text-align:center;padding:16px 20px;color:#94a3b8;
     <a href="#">Sectors</a>
     <a href="#">Scanners</a>
   </nav>
-  <span class="last-update">Last update: {build_date} ET</span>
+  <div class="header-right">
+    <div class="op-summary-line">{op_line}</div>
+    <span class="last-update">Last update: {build_date} ET</span>
+  </div>
 </header>
+
+{source_notice}
 
 {strip}
 
-<div class="main">
-{b_tile}
-{ph("SENTIMENT",   "Fear &amp; Greed")}
-{ph("RISK ON/OFF", "XLY / XLP")}
-{ph("CREDIT",      "HY OAS")}
-{ph("VOLATILITY",  "VIX")}
-{ph("OB / OS",     "SPY vs MA50")}
-</div>
+{pills}
+
+{bspark}
 
 {sector_sect}
 
@@ -435,6 +503,83 @@ def _placeholder_tile(label: str, sub: str) -> str:
   <div class="tile-big">{sub}</div>
   <div class="tile-sub">Not yet implemented</div>
 </div>"""
+
+
+def _dimension_pills_html(dimensions: list[dict]) -> str:
+    if not dimensions:
+        return ""
+    pills = ""
+    for dim in dimensions:
+        mid       = dim["metric_id"]
+        d_label   = _DIMENSION_DISPLAY_LABELS.get(mid, mid.upper())
+        status    = dim.get("status", "na")
+        val_label = dim.get("label", "—")
+        trend     = dim.get("trend", "flat")
+        change_1w = dim.get("change_1w")
+        note      = dim.get("note", "")
+
+        arrow   = _TREND_ARROWS.get(trend, "→")
+        a_color = _TREND_COLORS.get(trend, "gray")
+        v_color = status if status != "na" else "gray"
+
+        chg_s = ""
+        if change_1w is not None:
+            sign  = "+" if float(change_1w) > 0 else ""
+            chg_s = f"&nbsp;{sign}{change_1w}"
+
+        pills += (
+            f'<div class="dim-pill status-{status}">'
+            f'<div class="dim-pill-label">{d_label}</div>'
+            f'<div class="dim-pill-value {v_color}">{val_label}</div>'
+            f'<div class="dim-pill-trend {a_color}">{arrow}{chg_s}</div>'
+            f'<div class="dim-pill-note">{note}</div>'
+            f'</div>\n'
+        )
+    return f'<section class="market-state">\n{pills}</section>'
+
+
+def _operation_summary_line_html(summary: dict) -> str:
+    date_s   = summary.get("last_date", "—")
+    priced   = summary.get("priced", 0)
+    active   = summary.get("active", 0)
+    has_mock = summary.get("has_mock", False)
+    dq_st    = summary.get("dq_status") or "ok"
+    dq_cls   = f"dq-{dq_st}" if dq_st in ("ok", "warning", "error") else "dq-ok"
+    src      = '<span class="mock-warn">⚠ mock</span>' if has_mock else "yfinance"
+    return (
+        f"{src}"
+        f'<span style="color:#334155">·</span>'
+        f"<span>{date_s}</span>"
+        f'<span style="color:#334155">·</span>'
+        f"<span>{priced}/{active} eq.</span>"
+        f'<span style="color:#334155">·</span>'
+        f'<span class="{dq_cls}">DQ: {dq_st}</span>'
+    )
+
+
+def _source_notice_html(summary: dict) -> str:
+    if not summary.get("has_mock"):
+        return ""
+    ct = summary.get("mock_count", 0)
+    return (
+        f'<div class="source-notice">'
+        f'⚠ yfinance fetch failed for {ct:,} rows — mock-fallback data active. '
+        f'Values do not reflect live market data.'
+        f'</div>'
+    )
+
+
+def _breadth_sparkline_section_html(breadth_data: Optional[dict]) -> str:
+    if breadth_data is None or not breadth_data.get("history_50dma"):
+        return ""
+    hist = breadth_data.get("history_50dma", [])
+    if not hist:
+        return ""
+    val   = float(breadth_data.get("pct_above_50dma") or 0)
+    color = (_RGB["green"]  if val >= _BREADTH_GREEN else
+             _RGB["yellow"] if val >= _BREADTH_RED   else _RGB["red"])
+    spark = _sparkline(hist, "sbreadth", color, height=48)
+    return f'<div class="breadth-spark-row">{spark}</div>'
 
 
 def _sector_heatmap_html(sectors: list[dict]) -> str:
