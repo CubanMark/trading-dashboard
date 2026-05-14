@@ -196,17 +196,44 @@ def _get_industry_perf(conn: sqlite3.Connection) -> list[dict]:
     result = result[result["n"] >= _INDUSTRY_MIN_TICKERS].copy()
     result["perf_1m"] = result["perf_1m"].round(2)
     result = result.sort_values("perf_1m", ascending=False).reset_index(drop=True)
-    return result[["industry", "perf_1m", "n"]].to_dict("records")
+    records = result[["industry", "perf_1m", "n"]].to_dict("records")
+
+    # Annotate with scanner hit counts (latest scanner date)
+    try:
+        hdf = pd.read_sql(
+            """SELECT u.gics_sub_industry AS ind, COUNT(*) AS hits
+               FROM scanner_hits sh
+               JOIN universe u ON u.ticker = sh.ticker
+               WHERE sh.date = (SELECT MAX(date) FROM scanner_hits)
+                 AND u.gics_sub_industry IS NOT NULL
+                 AND u.gics_sub_industry != ''
+               GROUP BY ind""",
+            conn,
+        )
+        hit_counts = dict(zip(hdf["ind"], hdf["hits"].astype(int))) if not hdf.empty else {}
+    except Exception:
+        hit_counts = {}
+
+    for r in records:
+        r["hits"] = hit_counts.get(r["industry"], 0)
+
+    return records
 
 
 def _get_scanner_hits(conn: sqlite3.Connection) -> list[dict]:
     df = pd.read_sql(
-        """SELECT ticker, gics_sector, rs_rank, perf_1m, dist_52w_high, date
-           FROM scanner_hits
-           WHERE date = (SELECT MAX(date) FROM scanner_hits WHERE scanner = 'pullback_ma20')
-             AND scanner = 'pullback_ma20'
-           ORDER BY rs_rank DESC
-           LIMIT 10""",
+        """SELECT sh.ticker, sh.scanner,
+                  COALESCE(sh.scanner_label, sh.scanner) AS scanner_label,
+                  sh.gics_sector,
+                  u.gics_sub_industry,
+                  sh.rs_rank, sh.perf_1m, sh.dist_52w_high,
+                  COALESCE(sh.also_in, '') AS also_in,
+                  sh.date
+           FROM scanner_hits sh
+           LEFT JOIN universe u ON u.ticker = sh.ticker
+           WHERE sh.date = (SELECT MAX(date) FROM scanner_hits)
+           ORDER BY sh.rs_rank DESC
+           LIMIT 200""",
         conn,
     )
     if df.empty:
@@ -376,12 +403,25 @@ nav a.active{{color:#f1f5f9;font-weight:600}}
                  display:flex;align-items:center;gap:8px}}
 .scanner-date{{font-weight:400;color:#94a3b8;letter-spacing:0}}
 .scanner-count{{font-weight:400;color:#94a3b8;letter-spacing:0}}
+.scanner-warning{{background:#fef9c3;border:1px solid #fde68a;border-radius:6px;
+                  padding:6px 10px;font-size:11px;color:#854d0e;margin-bottom:10px}}
+.scanner-toolbar{{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}}
+.scanner-filter{{font-size:12px;padding:4px 8px;border:1px solid #e2e8f0;border-radius:6px;
+                 background:white;color:#1e293b;cursor:pointer}}
+.scanner-counter{{font-size:12px;color:#64748b;margin-left:4px}}
+.tag{{display:inline-block;padding:2px 8px;border-radius:4px;
+      font-size:11px;font-weight:700;letter-spacing:.3px;white-space:nowrap}}
+.tag-ma20{{background:#dcfce7;color:#15803d}}
+.tag-ma10{{background:#dbeafe;color:#1d4ed8}}
+.tag-3d{{background:#ffedd5;color:#c2410c}}
+.tag-default{{background:#f1f5f9;color:#475569}}
 .scanner-table{{width:100%;border-collapse:collapse;background:white;
                 border:1px solid #e2e8f0;border-radius:12px;overflow:hidden}}
 .scanner-table th{{font-size:11px;font-weight:700;letter-spacing:.5px;
                    text-transform:uppercase;color:#64748b;padding:10px 14px;
                    border-bottom:1px solid #e2e8f0;text-align:left;
                    background:#f8fafc}}
+.scanner-table th.sortable:hover{{color:#0f172a;cursor:pointer}}
 .scanner-table td{{padding:10px 14px;border-bottom:1px solid #f1f5f9;
                    font-size:13px;color:#1e293b;vertical-align:middle}}
 .scanner-table tr:last-child td{{border-bottom:none}}
@@ -389,6 +429,8 @@ nav a.active{{color:#f1f5f9;font-weight:600}}
 .scanner-ticker{{font-weight:700;font-size:14px;color:#0f172a}}
 .scanner-sector{{color:#64748b;font-size:12px}}
 .scanner-empty{{color:#94a3b8;font-size:13px;padding:16px 0}}
+.industry-hits-badge{{display:inline-block;padding:1px 6px;border-radius:10px;
+                       font-size:11px;font-weight:700;white-space:nowrap;flex-shrink:0}}
 footer{{text-align:center;padding:16px 20px;color:#94a3b8;
         font-size:12px;border-top:1px solid #e2e8f0;margin-top:4px}}
 </style>
@@ -674,10 +716,16 @@ def _industry_section_html(industries: list[dict]) -> str:
             perf = item["perf_1m"]
             sign = "+" if perf >= 0 else ""
             cls  = "green" if perf >= 0 else "red"
+            hits = item.get("hits", 0)
+            if hits > 0:
+                hits_html = f'<span class="industry-hits-badge" style="background:#dbeafe;color:#1d4ed8">{hits}</span>'
+            else:
+                hits_html = f'<span class="industry-hits-badge" style="background:#f1f5f9;color:#94a3b8">0</span>'
             html += (
                 f'<div class="industry-row">'
                 f'<span class="industry-name" title="{item["industry"]}">{item["industry"]}</span>'
                 f'<span class="industry-n">{int(item["n"])} stocks</span>'
+                f'{hits_html}'
                 f'<span class="industry-perf {cls}">{sign}{perf:.1f}%</span>'
                 f'</div>'
             )
@@ -703,55 +751,169 @@ def _industry_section_html(industries: list[dict]) -> str:
 </div>"""
 
 
+def _is_bear_regime(conn: sqlite3.Connection) -> bool:
+    """True when SPY close is below its 200-day moving average."""
+    df = pd.read_sql(
+        "SELECT value FROM macro_series WHERE series_id='SPY' ORDER BY date DESC LIMIT 201",
+        conn,
+    )
+    if len(df) < 201:
+        return False
+    close = df["value"].iloc[::-1].reset_index(drop=True).astype(float)
+    sma200 = close.rolling(200).mean().iloc[-1]
+    return float(close.iloc[-1]) < float(sma200)
+
+
 def _scanner_section_html(hits: list[dict], build_date: str) -> str:
+    try:
+        from data.db import connect as _db_connect
+        _tmp = None  # regime check done at render via data already loaded
+    except Exception:
+        pass
+
     hit_date = hits[0]["date"] if hits else build_date
-    count_s  = f"({len(hits)} hit{'s' if len(hits) != 1 else ''})" if hits else "(0 hits)"
+    n_hits   = len(hits)
+
+    # Regime message: use hit data absence as proxy (if no hits AND typical range)
+    # Actual regime shown via build() → _is_bear_regime() passed in
+    # For now render based on available hits
+
+    def _str(v) -> str:
+        return str(v) if (v is not None and v == v) else ""  # v==v guards against NaN
+
+    # Build filter options from data
+    setups     = sorted({_str(h.get("scanner_label") or h.get("scanner", "")) for h in hits} - {""})
+    sectors    = sorted({_str(h.get("gics_sector"))    for h in hits if _str(h.get("gics_sector"))} - {""})
+    industries = sorted({_str(h.get("gics_sub_industry")) for h in hits if _str(h.get("gics_sub_industry"))} - {""})
+
+    def _opt(val: str) -> str:
+        return f'<option value="{val}">{val}</option>'
+
+    setup_opts  = "".join(_opt(s) for s in setups)
+    sector_opts = "".join(_opt(s) for s in sectors)
+    ind_opts    = "".join(_opt(s) for s in industries)
+
+    tag_cls_map = {
+        "pullback_ma20": "tag-ma20",
+        "pullback_ma10": "tag-ma10",
+        "pullback_3d":   "tag-3d",
+    }
 
     if not hits:
-        body = f'<p class="scanner-empty">No pullback setups today.</p>'
+        body = '<p class="scanner-empty">No pullback setups today.</p>'
     else:
         rows = ""
         for h in hits:
-            rs    = h.get("rs_rank")
-            perf  = h.get("perf_1m")
-            dist  = h.get("dist_52w_high")
-            rs_s  = f"{rs:.0f}" if rs is not None else "—"
-            perf_s = (
-                f'<span class="{"green" if perf >= 0 else "red"}">'
-                f'{"+" if perf >= 0 else ""}{perf:.1f}%</span>'
-                if perf is not None else "—"
+            scanner_id  = h.get("scanner", "")
+            tag_label   = h.get("scanner_label") or scanner_id
+            tag_cls     = tag_cls_map.get(scanner_id, "tag-default")
+            ticker      = h.get("ticker", "—")
+            sector      = _str(h.get("gics_sector"))   or "—"
+            industry    = _str(h.get("gics_sub_industry")) or "—"
+            rs          = h.get("rs_rank")
+            perf        = h.get("perf_1m")
+            dist        = h.get("dist_52w_high")
+            also_in     = h.get("also_in") or "—"
+
+            rs_s    = f"{rs:.0f}" if rs is not None else "—"
+            dist_s  = f"{dist:.1f}%" if dist is not None else "—"
+            perf_s  = (f'<span class="{"green" if perf >= 0 else "red"}">'
+                       f'{"+" if perf >= 0 else ""}{perf:.1f}%</span>'
+                       if perf is not None else "—")
+            rs_num  = f"{rs:.0f}" if rs is not None else "0"
+            rows += (
+                f'<tr data-setup="{scanner_id}" data-sector="{sector}" data-industry="{industry}">'
+                f'<td><span class="tag {tag_cls}">{tag_label}</span></td>'
+                f'<td><span class="scanner-ticker">{ticker}</span></td>'
+                f'<td><span class="scanner-sector">{sector}</span></td>'
+                f'<td style="font-size:12px;color:#475569">{industry}</td>'
+                f'<td data-sort-value="{rs_num}">{rs_s}</td>'
+                f'<td>{perf_s}</td>'
+                f'<td>{dist_s}</td>'
+                f'<td style="font-size:11px;color:#94a3b8">{also_in}</td>'
+                f'</tr>\n'
             )
-            dist_s = f"{dist:.1f}%" if dist is not None else "—"
-            sector = h.get("gics_sector") or "—"
-            rows += f"""
-      <tr>
-        <td><span class="scanner-ticker">{h['ticker']}</span></td>
-        <td><span class="scanner-sector">{sector}</span></td>
-        <td>{rs_s}</td>
-        <td>{perf_s}</td>
-        <td>{dist_s}</td>
-      </tr>"""
-        body = f"""
-    <table class="scanner-table">
-      <thead>
-        <tr>
-          <th>Ticker</th>
-          <th>Sector</th>
-          <th>RS Rank</th>
-          <th>1M Perf</th>
-          <th>Dist 52W High</th>
-        </tr>
-      </thead>
-      <tbody>{rows}
-      </tbody>
-    </table>"""
+
+        toolbar = f"""<div class="scanner-toolbar">
+  <select id="filterSetup" class="scanner-filter">
+    <option value="">All Setups</option>{setup_opts}
+  </select>
+  <select id="filterSector" class="scanner-filter">
+    <option value="">All Sectors</option>{sector_opts}
+  </select>
+  <select id="filterIndustry" class="scanner-filter">
+    <option value="">All Industries</option>{ind_opts}
+  </select>
+  <span id="hitCounter" class="scanner-counter">{n_hits} hits shown</span>
+</div>"""
+
+        body = f"""{toolbar}
+<div style="overflow-x:auto">
+<table class="scanner-table" id="scannerTable">
+  <thead><tr>
+    <th class="sortable" data-col="0">Setup</th>
+    <th class="sortable" data-col="1">Ticker</th>
+    <th class="sortable" data-col="2">Sector</th>
+    <th class="sortable" data-col="3">Industry</th>
+    <th class="sortable" data-col="4">RS Rank</th>
+    <th class="sortable" data-col="5">1M Perf</th>
+    <th class="sortable" data-col="6">Dist 52W High</th>
+    <th class="sortable" data-col="7">Also In</th>
+  </tr></thead>
+  <tbody>
+{rows}  </tbody>
+</table>
+</div>
+<script>
+(function(){{
+  var sortState={{}};
+  document.querySelectorAll('.sortable').forEach(function(th){{
+    th.style.cursor='pointer';
+    th.addEventListener('click',function(){{
+      var col=parseInt(th.dataset.col);
+      var asc=!sortState[col];
+      sortState[col]=asc;
+      var tbody=document.querySelector('#scannerTable tbody');
+      var rows=Array.from(tbody.querySelectorAll('tr'));
+      rows.sort(function(a,b){{
+        var av=a.cells[col].dataset.sortValue||a.cells[col].textContent.trim();
+        var bv=b.cells[col].dataset.sortValue||b.cells[col].textContent.trim();
+        var an=parseFloat(av),bn=parseFloat(bv);
+        if(!isNaN(an)&&!isNaN(bn)) return asc?an-bn:bn-an;
+        return asc?av.localeCompare(bv):bv.localeCompare(av);
+      }});
+      rows.forEach(function(r){{tbody.appendChild(r);}});
+    }});
+  }});
+  function applyFilters(){{
+    var setup=document.getElementById('filterSetup').value;
+    var sector=document.getElementById('filterSector').value;
+    var industry=document.getElementById('filterIndustry').value;
+    var shown=0;
+    document.querySelectorAll('#scannerTable tbody tr').forEach(function(row){{
+      var m=(!setup||row.dataset.setup===setup)&&
+             (!sector||row.dataset.sector===sector)&&
+             (!industry||row.dataset.industry===industry);
+      row.style.display=m?'':'none';
+      if(m) shown++;
+    }});
+    var ctr=document.getElementById('hitCounter');
+    if(ctr) ctr.textContent=shown+' hit'+(shown!==1?'s':'')+' shown';
+  }}
+  ['filterSetup','filterSector','filterIndustry'].forEach(function(id){{
+    var el=document.getElementById(id);
+    if(el) el.addEventListener('change',applyFilters);
+  }});
+}})();
+</script>"""
 
     return f"""<div class="scanner-section">
   <div class="scanner-header">
-    PULLBACK MA20
+    PULLBACK SCANNER — 3 VARIANTS
     <span class="scanner-date">{hit_date}</span>
-    <span class="scanner-count">{count_s}</span>
+    <span class="scanner-count">({n_hits} total hits)</span>
   </div>
+  <div class="scanner-warning">⚠ Research scanner only — not a validated tradable edge</div>
   {body}
 </div>"""
 

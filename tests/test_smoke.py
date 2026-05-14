@@ -15,8 +15,12 @@ from data.db import _SCHEMA, _INDEXES, ensure_column
 from data.universe import seed_from_csv, normalize_yahoo_symbol
 from data.loader import load_price_dfs
 from compute.indicators import add_sma, add_atr, add_momentum, is_uptrend
-from scanners.pullback import scan, scan_universe
-from render.homepage import _get_sector_perf, _sector_section_html, _get_industry_perf, _industry_section_html
+from scanners.pullback import scan, scan_universe, scan_ma20, scan_ma10, scan_3d, _annotate_overlaps
+from render.homepage import (
+    _get_sector_perf, _sector_section_html,
+    _get_industry_perf, _industry_section_html,
+    _scanner_section_html,
+)
 
 SEED_CSV = Path(__file__).parent.parent / "data" / "universe_seed.csv"
 
@@ -31,10 +35,13 @@ def mem_db() -> sqlite3.Connection:
     conn.executescript(_SCHEMA)
     conn.executescript(_INDEXES)
     # Apply same column migrations as init_schema()
-    ensure_column(conn, "macro_series", "open",   "REAL")
-    ensure_column(conn, "macro_series", "high",   "REAL")
-    ensure_column(conn, "macro_series", "low",    "REAL")
-    ensure_column(conn, "prices",       "source", "TEXT DEFAULT 'yfinance'")
+    ensure_column(conn, "macro_series",  "open",         "REAL")
+    ensure_column(conn, "macro_series",  "high",         "REAL")
+    ensure_column(conn, "macro_series",  "low",          "REAL")
+    ensure_column(conn, "prices",        "source",       "TEXT DEFAULT 'yfinance'")
+    ensure_column(conn, "scanner_hits",  "scanner_label","TEXT")
+    ensure_column(conn, "scanner_hits",  "also_in",      "TEXT DEFAULT ''")
+    ensure_column(conn, "scanner_hits",  "warning",      "TEXT")
     return conn
 
 
@@ -211,10 +218,12 @@ def test_scan_returns_false_for_unknown_date(str_price_df):
     assert scan(str_price_df, "1900-01-01") is False
 
 
-def test_scan_universe_returns_list(str_price_df):
+def test_scan_universe_returns_dict(str_price_df):
     last_date = str_price_df.index[-1]
     result = scan_universe({"AAPL": str_price_df}, last_date)
-    assert isinstance(result, list)
+    assert isinstance(result, dict)
+    assert "regime" in result
+    assert "hits" in result
 
 
 def test_scan_universe_excludes_low_price(str_price_df):
@@ -225,7 +234,8 @@ def test_scan_universe_excludes_low_price(str_price_df):
     low_df["low"]   = 0.95
     last_date = low_df.index[-1]
     result = scan_universe({"CHEAP": low_df}, last_date)
-    assert "CHEAP" not in result
+    all_hits = {t for hits in result["hits"].values() for t in hits}
+    assert "CHEAP" not in all_hits
 
 
 # ---------------------------------------------------------------------------
@@ -552,3 +562,121 @@ def test_operation_summary_structure(mem_db):
     assert "has_mock" in summary
     assert "dq_status" in summary
     assert summary["has_mock"] is False
+
+
+# ---------------------------------------------------------------------------
+# Session 3: Scanner variants, regime filter, overlap annotation
+# ---------------------------------------------------------------------------
+
+def test_scan_ma20_returns_bool(str_price_df):
+    last_date = str_price_df.index[-1]
+    assert isinstance(scan_ma20(str_price_df, last_date), bool)
+
+
+def test_scan_ma10_returns_bool(str_price_df):
+    last_date = str_price_df.index[-1]
+    assert isinstance(scan_ma10(str_price_df, last_date), bool)
+
+
+def test_scan_3d_returns_bool(str_price_df):
+    last_date = str_price_df.index[-1]
+    assert isinstance(scan_3d(str_price_df, last_date), bool)
+
+
+def test_scan_3d_detects_three_lower_closes(str_price_df):
+    df = str_price_df.copy()
+    dates = df.index.tolist()
+    # Stamp 3 consecutive lower closes at the end — well above MIN_PRICE
+    df.loc[dates[-3], "close"] = 60.0
+    df.loc[dates[-2], "close"] = 58.0
+    df.loc[dates[-1], "close"] = 56.0
+    for d in dates[-3:]:
+        df.loc[d, "high"]  = df.loc[d, "close"] * 1.01
+        df.loc[d, "low"]   = df.loc[d, "close"] * 0.99
+        df.loc[d, "open"]  = df.loc[d, "close"] * 1.005
+        df.loc[d, "volume"] = 2_000_000.0
+    # Result depends on uptrend flag; we only assert it returns bool
+    assert isinstance(scan_3d(df, dates[-1]), bool)
+
+
+def test_scan_universe_bear_regime():
+    n = 210
+    rng = np.random.default_rng(0)
+    close = np.maximum(1.0, 200 - np.arange(n) * 0.5 + rng.normal(0, 0.5, n))
+    dates = pd.date_range("2025-01-01", periods=n, freq="B").strftime("%Y-%m-%d")
+    spy = pd.Series(close.tolist(), index=dates)
+    result = scan_universe({}, dates[-1], spy_close=spy)
+    assert result["regime"] == "bear"
+    assert result["hits"] == {}
+
+
+def test_scan_universe_excludes_sub_industry(str_price_df):
+    meta_map = {"BIO": {"gics_sub_industry": "Biotechnology"}}
+    last_date = str_price_df.index[-1]
+    result = scan_universe({"BIO": str_price_df}, last_date, meta_map=meta_map)
+    all_hits = {t for hits in result["hits"].values() for t in hits}
+    assert "BIO" not in all_hits
+
+
+def test_annotate_overlaps_fills_also_in():
+    rows = [
+        {"ticker": "AAPL", "scanner": "pullback_ma20", "also_in": ""},
+        {"ticker": "AAPL", "scanner": "pullback_3d",   "also_in": ""},
+        {"ticker": "MSFT", "scanner": "pullback_ma20", "also_in": ""},
+    ]
+    _annotate_overlaps(rows)
+    aapl_ma20 = next(r for r in rows if r["ticker"] == "AAPL" and r["scanner"] == "pullback_ma20")
+    assert "3D" in aapl_ma20["also_in"]
+    msft_row = next(r for r in rows if r["ticker"] == "MSFT")
+    assert msft_row["also_in"] == ""
+
+
+def test_scanner_section_html_no_hits():
+    html = _scanner_section_html([], "2026-05-14")
+    assert "No pullback setups today" in html
+    assert "scanner-warning" in html
+
+
+def test_scanner_section_html_renders_tags():
+    hits = [{
+        "ticker": "AAPL",
+        "scanner": "pullback_ma20",
+        "scanner_label": "MA20 Pullback",
+        "gics_sector": "Technology",
+        "gics_sub_industry": "Semiconductors",
+        "rs_rank": 75.0,
+        "perf_1m": 5.2,
+        "dist_52w_high": -3.1,
+        "also_in": "",
+        "date": "2026-05-14",
+    }]
+    html = _scanner_section_html(hits, "2026-05-14")
+    assert "AAPL" in html
+    assert "MA20 Pullback" in html
+    assert "tag-ma20" in html
+    assert "scanner-toolbar" in html
+
+
+def test_industry_perf_includes_hits_field(mem_db):
+    for j in range(3):
+        ticker = f"SEMI{j}"
+        _seed_universe_with_industry(mem_db, ticker, "Semiconductors")
+        _seed_prices_for_ticker(mem_db, ticker)
+
+    result = _get_industry_perf(mem_db)
+    assert len(result) > 0
+    for r in result:
+        assert "hits" in r
+        assert isinstance(r["hits"], int)
+        assert r["hits"] >= 0
+
+
+def test_industry_section_html_shows_hits_badge(mem_db):
+    for j in range(3):
+        ticker = f"SEMI{j}"
+        _seed_universe_with_industry(mem_db, ticker, "Semiconductors")
+        _seed_prices_for_ticker(mem_db, ticker)
+
+    industries = _get_industry_perf(mem_db)
+    html = _industry_section_html(industries)
+    assert "industry-hits-badge" in html

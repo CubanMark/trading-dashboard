@@ -100,14 +100,14 @@ def main() -> None:
         logger.info("Step 4: loading prices for scanner …")
         universe_df = uni.load(conn)
         meta_map = (
-            universe_df.set_index("ticker")[["gics_sector", "gics_industry"]]
+            universe_df.set_index("ticker")[["gics_sector", "gics_industry", "gics_sub_industry"]]
             .to_dict("index")
         )
 
         price_dfs = loader.load_price_dfs(conn, universe_df["ticker"].tolist(), rows=400)
         logger.info("Loaded prices for %d tickers", len(price_dfs))
 
-        # SPY from macro_series for RS computation
+        # SPY from macro_series for RS computation + regime check
         spy_close = pd.read_sql(
             "SELECT date, value FROM macro_series WHERE series_id = 'SPY' ORDER BY date",
             conn,
@@ -131,35 +131,55 @@ def main() -> None:
         )
         logger.info("RS rank computed for %d tickers", len(rs_ranks_s))
 
-        # Run pullback scanner
-        hits = pb.scan_universe(price_dfs, today)
-        logger.info("Pullback scanner: %d hits on %s", len(hits), today)
+        # Run all 3 pullback scanner variants with regime filter
+        scan_result = pb.scan_universe(
+            price_dfs, today, spy_close=spy_close, meta_map=meta_map
+        )
 
-        hit_rows = []
-        for ticker in hits:
-            df = price_dfs.get(ticker)
-            if df is None:
-                continue
-            meta = dict(meta_map.get(ticker, {}))
-            meta["rs_rank"] = float(rs_ranks_s.get(ticker, 50.0))
-            meta["earnings_date"] = None
-            try:
-                hit_rows.append(pb.build_hit_row(ticker, df, today, meta))
-            except Exception as exc:
-                logger.warning("build_hit_row failed for %s: %s", ticker, exc)
+        hit_rows: list[dict] = []
+        if scan_result["regime"] == "bear":
+            logger.info("Pullback scanner suspended — bear regime (SPY < SMA200)")
+            log_run(conn, "step4_scanner", "ok", "Bear regime — scanner suspended")
+        else:
+            scanner_specs = [
+                ("pullback_ma20", "MA20 Pullback"),
+                ("pullback_ma10", "MA10 Pullback"),
+                ("pullback_3d",   "3D Pullback"),
+            ]
+            for scanner_id, scanner_label in scanner_specs:
+                for ticker in scan_result["hits"].get(scanner_id, []):
+                    df = price_dfs.get(ticker)
+                    if df is None:
+                        continue
+                    meta = dict(meta_map.get(ticker, {}))
+                    meta["rs_rank"]       = float(rs_ranks_s.get(ticker, 50.0))
+                    meta["earnings_date"] = None
+                    meta["scanner"]       = scanner_id
+                    meta["scanner_label"] = scanner_label
+                    meta["warning"]       = pb._WARNING
+                    try:
+                        hit_rows.append(pb.build_hit_row(ticker, df, today, meta))
+                    except Exception as exc:
+                        logger.warning("build_hit_row failed for %s: %s", ticker, exc)
 
-        if hit_rows:
-            conn.executemany(
-                """INSERT OR REPLACE INTO scanner_hits
-                   (date, ticker, scanner, gics_sector, gics_industry, rs_rank,
-                    perf_1m, adr_pct, atr, avg_volume, dist_52w_high, earnings_date)
-                   VALUES (:date, :ticker, :scanner, :gics_sector, :gics_industry, :rs_rank,
-                           :perf_1m, :adr_pct, :atr, :avg_volume, :dist_52w_high, :earnings_date)""",
-                hit_rows,
-            )
-            conn.commit()
-        logger.info("Stored %d scanner hits for %s", len(hit_rows), today)
-        log_run(conn, "step4_scanner", "ok", f"{len(hit_rows)} scanner hits for {today}")
+            pb._annotate_overlaps(hit_rows)
+
+            if hit_rows:
+                conn.executemany(
+                    """INSERT OR REPLACE INTO scanner_hits
+                       (date, ticker, scanner, gics_sector, gics_industry, rs_rank,
+                        perf_1m, adr_pct, atr, avg_volume, dist_52w_high, earnings_date,
+                        scanner_label, also_in, warning)
+                       VALUES (:date, :ticker, :scanner, :gics_sector, :gics_industry, :rs_rank,
+                               :perf_1m, :adr_pct, :atr, :avg_volume, :dist_52w_high, :earnings_date,
+                               :scanner_label, :also_in, :warning)""",
+                    hit_rows,
+                )
+                conn.commit()
+            total_by_variant = {k: len(v) for k, v in scan_result["hits"].items()}
+            logger.info("Pullback scanner: %s on %s", total_by_variant, today)
+            log_run(conn, "step4_scanner", "ok",
+                    f"{len(hit_rows)} scanner hit rows for {today} ({total_by_variant})")
 
         # --- Step 5: Render HTML ---
         homepage.build(conn, today)
