@@ -1,0 +1,502 @@
+ticker,ticker_raw,security,gics_sector,gics_sub_industry,data_source,rows,first_date,last_date,last_close,median_dollar_volume_126d,has_min_history,passes_price_filter,passes_liquidity_filter,passes_universe_filter
+A,A,Agilent Technologies,Health Care,Life Sciences Tools & Services,cache,5534,2004-01-02,2025-12-30,137.0617218017578,216967596.1364746,True,True,True,True
+AAPL,AAPL,Apple Inc.,Information Technology,"Technology Hardware, Storage & Peripherals",cache,5534,2004-01-02,2025-12-30,272.82470703125,11265655695.220947,True,True,True,True
+ABBV,ABBV,AbbVie,Health Care,Biotechnology,cache,3269,2013-01-02,2025-12-30,226.03114318847656,1060672334.4139099,True,True,True,True
+ABNB,ABNB,Airbnb,Consumer Discretionary,"Hotels, Resorts & Cruise Lines",cache,1269,2020-12-10,2025-12-30,136.91000366210938,540657229.511261,True,True,True,True
+ABT,ABT,Abbott Laboratories,Health Care,Health Care Equipment,cache,5534,2004-01-02,2025-12-30,124.3658447265625,683860451.1886597,True,True,True,True
+ACGL,ACGL,Arch Capital Group,Financials,Property & Casualty Insurance,cache,5534,2004-01-02,2025-12-30,96.66000366210938,195176244.6849823,True,True,True,True
+ACN,ACN,Accenture,Information Technology,IT Consulting & Other Services,cache,5534,2004-01-02,2025-12-30,267.72955322265625,1007708201.5274048,True,True,True,True
+ADBE,ADBE,Adobe Inc.,Information Technology,Application Software,cache,5534,2004-01-02,2025-12-30,352.510009765625,1285071405.7357788,True,True,True,True
+ADI,ADI,Analog Devices,Information Technology,Semiconductors,cache,5534,2004-01-02,2025-12-30,273.9621887207031,769963145.677185,True,True,True,True
+ADM,ADM,Archer Daniels Midland,Consumer Staples,Agricultural Products & Services,cache,5534,2004-01-02,2025-12-30,57.73483276367188,178882325.76389313,True,True,True,True
+ADP,ADP,Automatic Data Processing,Industrials,Human Resource & Employment Services,cache,5534,2004-01-02,2025-12-30,257.4032287597656,488511746.37908936,True,True,True,True
+ADSK,ADSK,Autodesk,Information Technology,Application Software,cache,5534,2004-01-02,2025-12-30,299.5400085449219,408888077.89764404,True,True,True,True
+AEE,AEE,Ameren,Utilities,Multi-Utilities,cache,5534,2004-01-02,2025-12-30,100.060302734375,149163712.02850342,True,True,True,True
+AEP,AEP,American Electric Power,Utilities,Electric Utilities,cache,5534,2004-01-02,2025-12-30,115.08008575439452,346672132.2658539,True,True,True,True
+AES,AES,AES Corporation,Utilities,Independent Power Producers & Energy Traders,cache,5534,2004-01-02,2025-12-30,14.33031940460205,110427616.20140076,True,True,True,True
+AFL,AFL,Aflac,Financials,Life & Health Insurance,cache,5534,2004-01-02,2025-12-30,110.21442413330078,223807379.01115417,True,True,True,True
+AIG,AIG,American International Group,Financials,Multi-line Insurance,cache,5534,2004-01-02,2025-12-30,85.62493133544922,319413918.9071655,True,True,True,True
+AIZ,AIZ,Assurant,Financials,Multi-line Insurance,cache,5511,2004-02-05,2025-12-30,241.1502685546875,68564933.91418457,True,True,True,True
+AJG,AJG,Arthur J. Gallagher & Co.,Financials,Insurance Brokers,cache,5534,2004-01-02,2025-12-30,261.0318908691406,389048279.01000977,True,True,True,True
+AKAM,AKAM,Akamai Technologies,Information Technology,Internet Services & Infrastructure,cache,5534,2004-01-02,2025-12-30,87.97000122070312,131827978.82232666,True,True,True,True
+ALB,ALB,Albemarle Corporation,Materials,Specialty Chemicals,cache,5534,2004-01-02,2025-12-30,141.65907287597656,322903570.5963135,True,True,True,True
+ALGN,ALGN,Align Technology,Health Care,Health Care Supplies,cache,5534,2004-01-02,2025-12-30,158.13999938964844,173089116.62826538,True,True,True,True
+ALL,ALL,Allstate,Financials,Property & Casualty Insurance,cache,5534,2004-01-02,2025-12-30,208.0472869873047,273526786.3769531,True,True,True,True
+ALLE,ALLE,Allegion,Industrials,Building Products,cache,3047,2013-11-18,2025-12-30,160.5223846435547,137534700.04730225,True,True,True,True
+AMAT,AMAT,Applied Materials,Information Technology,Semiconductor Materials & Equipment,cache,5534,2004-01-02,2025-12-30,259.64617919921875,1465672814.2791748,True,True,True,True
+AMCR,AMCR,Amcor,Materials,Paper & Plastic Packaging Products & Materials,cache,3427,2012-05-15,2025-12-30,41.40660858154297,170184634.4557953,True,True,True,True
+AMD,AMD,Advanced Micro Devices,Information Technology,Semiconductors,cache,5534,2004-01-02,2025-12-30,215.33999633789065,8815760699.775696,True,True,True,True
+AME,AME,Ametek,Industrials,Electrical Components & Equipment,cache,5534,2004-01-02,2025-12-30,206.7018280029297,225869883.6883545,True,True,True,True
+AMGN,AMGN,Amgen,Health Care,Biotechnology,cache,5534,2004-01-02,2025-12-30,326.4281311035156,633700315.6967163,True,True,True,True
+AMP,AMP,Ameriprise Financial,Financials,Asset Management & Custody Banks,cache,5105,2005-09-15,2025-12-30,493.0129699707031,233947304.47235107,True,True,True,True
+AMT,AMT,American Tower,Real Estate,Telecom Tower REITs,cache,5534,2004-01-02,2025-12-30,174.9717559814453,522726890.69671625,True,True,True,True
+AMZN,AMZN,Amazon,Consumer Discretionary,Broadline Retail,cache,5534,2004-01-02,2025-12-30,232.52999877929688,8966265655.11856,True,True,True,True
+ANET,ANET,Arista Networks,Information Technology,Communications Equipment,cache,2910,2014-06-06,2025-12-30,132.44000244140625,1008847889.907074,True,True,True,True
+AON,AON,Aon plc,Financials,Insurance Brokers,cache,5534,2004-01-02,2025-12-30,356.489990234375,400728375.4760742,True,True,True,True
+AOS,AOS,A. O. Smith,Industrials,Building Products,cache,5534,2004-01-02,2025-12-30,67.4067153930664,77956007.4344635,True,True,True,True
+APA,APA,APA Corporation,Energy,Oil & Gas Exploration & Production,cache,5534,2004-01-02,2025-12-30,24.304651260375977,143128354.92286682,True,True,True,True
+APD,APD,Air Products,Materials,Industrial Gases,cache,5534,2004-01-02,2025-12-30,245.47784423828125,275747214.6469116,True,True,True,True
+APH,APH,Amphenol,Information Technology,Electronic Components,cache,5534,2004-01-02,2025-12-30,135.93133544921875,914350188.9877319,True,True,True,True
+APO,APO,Apollo Global Management,Financials,Asset Management & Custody Banks,cache,3711,2011-03-30,2025-12-30,145.46578979492188,408389725.14801025,True,True,True,True
+APP,APP,AppLovin,Information Technology,Application Software,cache,1184,2021-04-15,2025-12-30,693.7100219726562,2449072010.2157593,True,True,True,True
+APTV,APTV,Aptiv,Consumer Discretionary,Automotive Parts & Equipment,cache,3549,2011-11-17,2025-12-30,76.9000015258789,161786794.58389282,True,True,True,True
+ARE,ARE,Alexandria Real Estate Equities,Real Estate,Office REITs,cache,5534,2004-01-02,2025-12-30,47.991737365722656,111359632.25135803,True,True,True,True
+ARES,ARES,Ares Management,Financials,Asset Management & Custody Banks,cache,2934,2014-05-02,2025-12-30,161.03756713867188,256905334.81140137,True,True,True,True
+ATO,ATO,Atmos Energy,Utilities,Gas Utilities,cache,5534,2004-01-02,2025-12-30,167.64846801757812,129779345.2659607,True,True,True,True
+AVB,AVB,AvalonBay Communities,Real Estate,Multi-Family Residential REITs,cache,5534,2004-01-02,2025-12-30,181.2310333251953,150803691.30325317,True,True,True,True
+AVGO,AVGO,Broadcom,Information Technology,Semiconductors,cache,4126,2009-08-06,2025-12-30,349.1176452636719,6628898929.081726,True,True,True,True
+AVY,AVY,Avery Dennison,Materials,Paper & Plastic Packaging Products & Materials,cache,5534,2004-01-02,2025-12-30,182.25689697265625,106379254.22210693,True,True,True,True
+AWK,AWK,American Water Works,Utilities,Water Utilities,cache,4451,2008-04-23,2025-12-30,130.24691772460938,171061552.23693848,True,True,True,True
+AXON,AXON,Axon Enterprise,Industrials,Aerospace & Defense,cache,5534,2004-01-02,2025-12-30,572.1099853515625,402511267.2973633,True,True,True,True
+AXP,AXP,American Express,Financials,Consumer Finance,cache,5534,2004-01-02,2025-12-30,371.3883056640625,786420972.7020264,True,True,True,True
+AZO,AZO,AutoZone,Consumer Discretionary,Automotive Retail,cache,5534,2004-01-02,2025-12-30,3398.85009765625,465432789.4042969,True,True,True,True
+BA,BA,Boeing,Industrials,Aerospace & Defense,cache,5534,2004-01-02,2025-12-30,218.5,1465060498.370361,True,True,True,True
+BAC,BAC,Bank of America,Financials,Diversified Banks,cache,5534,2004-01-02,2025-12-30,54.9692497253418,1682494446.8959808,True,True,True,True
+BALL,BALL,Ball Corporation,Materials,"Metal, Glass & Plastic Containers",cache,5534,2004-01-02,2025-12-30,53.08138656616211,119829196.69303894,True,True,True,True
+BAX,BAX,Baxter International,Health Care,Health Care Equipment,cache,5534,2004-01-02,2025-12-30,19.29051971435547,146453922.37939835,True,True,True,True
+BBY,BBY,Best Buy,Consumer Discretionary,Computer & Electronics Retail,cache,5534,2004-01-02,2025-12-30,66.81271362304688,240157715.42396545,True,True,True,True
+BDX,BDX,Becton Dickinson,Health Care,Health Care Equipment,cache,5534,2004-01-02,2025-12-30,152.82901000976562,344766717.3850403,True,True,True,True
+BEN,BEN,Franklin Resources,Financials,Asset Management & Custody Banks,cache,5534,2004-01-02,2025-12-30,23.51631736755371,85404247.83363342,True,True,True,True
+BF-B,BF.B,Brown–Forman,Consumer Staples,Distillers & Vintners,cache,5534,2004-01-02,2025-12-30,26.08921432495117,98888752.62765884,True,True,True,True
+BG,BG,Bunge Global,Consumer Staples,Agricultural Products & Services,cache,5534,2004-01-02,2025-12-30,89.16767120361328,130136124.5880127,True,True,True,True
+BIIB,BIIB,Biogen,Health Care,Biotechnology,cache,5534,2004-01-02,2025-12-30,176.39999389648438,215034229.5135498,True,True,True,True
+BK,BK,BNY Mellon,Financials,Asset Management & Custody Banks,cache,5534,2004-01-02,2025-12-30,115.89456939697266,339882749.2794037,True,True,True,True
+BKNG,BKNG,Booking Holdings,Consumer Discretionary,"Hotels, Resorts & Cruise Lines",cache,5534,2004-01-02,2025-12-30,216.59190368652344,1110776827.6405334,True,True,True,True
+BKR,BKR,Baker Hughes,Energy,Oil & Gas Equipment & Services,cache,5534,2004-01-02,2025-12-30,45.916786193847656,287215162.5125885,True,True,True,True
+BLDR,BLDR,Builders FirstSource,Industrials,Building Products,cache,5160,2005-06-28,2025-12-30,103.19000244140624,222947424.72610474,True,True,True,True
+BLK,BLK,BlackRock,Financials,Asset Management & Custody Banks,cache,5534,2004-01-02,2025-12-30,1077.3126220703125,600002638.9587402,True,True,True,True
+BMY,BMY,Bristol Myers Squibb,Health Care,Pharmaceuticals,cache,5534,2004-01-02,2025-12-30,53.03005599975586,567561249.215889,True,True,True,True
+BR,BR,Broadridge Financial Solutions,Industrials,Data Processing & Outsourced Services,cache,4725,2007-03-22,2025-12-30,224.00845336914065,146153357.572937,True,True,True,True
+BRK-B,BRK.B,Berkshire Hathaway,Financials,Multi-Sector Holdings,cache,5534,2004-01-02,2025-12-30,503.7099914550781,2061561204.8828125,True,True,True,True
+BRO,BRO,Brown & Brown,Financials,Insurance Brokers,cache,5534,2004-01-02,2025-12-30,80.03606414794922,229282027.6287079,True,True,True,True
+BSX,BSX,Boston Scientific,Health Care,Health Care Equipment,cache,5534,2004-01-02,2025-12-30,96.01000213623048,784336071.3993073,True,True,True,True
+BX,BX,Blackstone Inc.,Financials,Asset Management & Custody Banks,cache,4661,2007-06-22,2025-12-30,153.00173950195312,581505849.3438721,True,True,True,True
+BXP,BXP,"BXP, Inc.",Real Estate,Office REITs,cache,5534,2004-01-02,2025-12-30,67.64373779296875,102197615.63491821,True,True,True,True
+C,C,Citigroup,Financials,Diversified Banks,cache,5534,2004-01-02,2025-12-30,116.60221862792967,1228116221.6529846,True,True,True,True
+CAG,CAG,Conagra Brands,Consumer Staples,Packaged Foods & Meats,cache,5534,2004-01-02,2025-12-30,17.092769622802734,177378366.7339325,True,True,True,True
+CAH,CAH,Cardinal Health,Health Care,Health Care Distributors,cache,5534,2004-01-02,2025-12-30,206.1949157714844,347279432.72857666,True,True,True,True
+CARR,CARR,Carrier Global,Industrials,Building Products,cache,1454,2020-03-19,2025-12-30,53.20178985595703,332456237.5778198,True,True,True,True
+CASY,CASY,Casey's,Consumer Staples,Food Retail,cache,5534,2004-01-02,2025-12-30,561.0763549804688,142137173.29559326,True,True,True,True
+CAT,CAT,Caterpillar Inc.,Industrials,Construction Machinery & Heavy Transportation Equipment,cache,5534,2004-01-02,2025-12-30,574.9476318359375,1306379372.177124,True,True,True,True
+CB,CB,Chubb Limited,Financials,Property & Casualty Insurance,cache,5534,2004-01-02,2025-12-30,313.21539306640625,448969696.3973999,True,True,True,True
+CBOE,CBOE,Cboe Global Markets,Financials,Financial Exchanges & Data,cache,3911,2010-06-15,2025-12-30,253.9130096435547,183128412.33825684,True,True,True,True
+CBRE,CBRE,CBRE Group,Real Estate,Real Estate Services,cache,5424,2004-06-10,2025-12-30,163.30999755859375,208064462.34817505,True,True,True,True
+CCI,CCI,Crown Castle,Real Estate,Telecom Tower REITs,cache,5534,2004-01-02,2025-12-30,88.00009155273438,252073146.70410156,True,True,True,True
+CCL,CCL,Carnival,Consumer Discretionary,"Hotels, Resorts & Cruise Lines",cache,5534,2004-01-02,2025-12-30,30.67819023132324,519650304.69379425,True,True,True,True
+CDNS,CDNS,Cadence Design Systems,Information Technology,Application Software,cache,5534,2004-01-02,2025-12-30,315.6000061035156,513266696.5194702,True,True,True,True
+CDW,CDW,CDW Corporation,Information Technology,Technology Distributors,cache,3147,2013-06-27,2025-12-30,137.69546508789062,189428792.10281372,True,True,True,True
+CEG,CEG,Constellation Energy,Utilities,Electric Utilities,cache,991,2022-01-19,2025-12-30,356.6420593261719,772647031.2606812,True,True,True,True
+CF,CF,CF Industries,Materials,Fertilizers & Agricultural Chemicals,cache,5129,2005-08-11,2025-12-30,76.52149200439453,194879785.76049805,True,True,True,True
+CFG,CFG,Citizens Financial Group,Financials,Regional Banks,cache,2834,2014-09-24,2025-12-30,58.5389518737793,209626372.93720245,True,True,True,True
+CHD,CHD,Church & Dwight,Consumer Staples,Household Products,cache,5534,2004-01-02,2025-12-30,84.17992401123047,189509059.31472778,True,True,True,True
+CHRW,CHRW,C.H. Robinson,Industrials,Air Freight & Logistics,cache,5534,2004-01-02,2025-12-30,161.40789794921875,185547347.03598022,True,True,True,True
+CHTR,CHTR,Charter Communications,Communication Services,Cable & Satellite,cache,4022,2010-01-05,2025-12-30,209.6000061035156,456427767.59490967,True,True,True,True
+CI,CI,Cigna,Health Care,Health Care Services,cache,5534,2004-01-02,2025-12-30,274.9652709960937,444691964.3600463,True,True,True,True
+CIEN,CIEN,Ciena,Information Technology,Communications Equipment,cache,5534,2004-01-02,2025-12-30,238.3600006103516,358827847.8050232,True,True,True,True
+CINF,CINF,Cincinnati Financial,Financials,Property & Casualty Insurance,cache,5534,2004-01-02,2025-12-30,163.98207092285156,76574103.43704224,True,True,True,True
+CL,CL,Colgate-Palmolive,Consumer Staples,Household Products,cache,5534,2004-01-02,2025-12-30,78.53799438476562,438599671.3695526,True,True,True,True
+CLX,CLX,Clorox,Consumer Staples,Household Products,cache,5534,2004-01-02,2025-12-30,98.46443176269533,203818913.8824463,True,True,True,True
+CMCSA,CMCSA,Comcast,Communication Services,Cable & Satellite,cache,5534,2004-01-02,2025-12-30,27.44352531433105,705640994.6828089,True,True,True,True
+CME,CME,CME Group,Financials,Financial Exchanges & Data,cache,5534,2004-01-02,2025-12-30,269.3900146484375,479308015.28167725,True,True,True,True
+CMG,CMG,Chipotle Mexican Grill,Consumer Discretionary,Restaurants,cache,5014,2006-01-26,2025-12-30,37.040000915527344,714742447.1263885,True,True,True,True
+CMI,CMI,Cummins,Industrials,Construction Machinery & Heavy Transportation Equipment,cache,5534,2004-01-02,2025-12-30,511.8890686035156,350874789.5782471,True,True,True,True
+CMS,CMS,CMS Energy,Utilities,Multi-Utilities,cache,5534,2004-01-02,2025-12-30,69.89694213867188,145565890.9286499,True,True,True,True
+CNC,CNC,Centene Corporation,Health Care,Managed Health Care,cache,5534,2004-01-02,2025-12-30,41.209999084472656,356754207.88879395,True,True,True,True
+CNP,CNP,CenterPoint Energy,Utilities,Multi-Utilities,cache,5534,2004-01-02,2025-12-30,38.39821243286133,174819574.91779327,True,True,True,True
+COF,COF,Capital One,Financials,Consumer Finance,cache,5534,2004-01-02,2025-12-30,243.04005432128903,705760390.0543213,True,True,True,True
+COHR,COHR,Coherent Corp.,Information Technology,Electronic Components,cache,5534,2004-01-02,2025-12-30,186.80999755859372,400379329.83322144,True,True,True,True
+COIN,COIN,Coinbase,Financials,Financial Exchanges & Data,cache,1185,2021-04-14,2025-12-30,231.6000061035156,2852594849.334717,True,True,True,True
+COO,COO,Cooper Companies (The),Health Care,Health Care Supplies,cache,5534,2004-01-02,2025-12-30,82.47000122070312,173023048.28300476,True,True,True,True
+COP,COP,ConocoPhillips,Energy,Oil & Gas Exploration & Production,cache,5534,2004-01-02,2025-12-30,93.37335968017578,552427471.3867188,True,True,True,True
+COR,COR,Cencora,Health Care,Health Care Distributors,cache,5534,2004-01-02,2025-12-30,339.4588317871094,392000505.3222656,True,True,True,True
+COST,COST,Costco,Consumer Staples,Consumer Staples Merchandise Retail,cache,5534,2004-01-02,2025-12-30,864.4690551757812,2090277751.8859863,True,True,True,True
+CPAY,CPAY,Corpay,Financials,Transaction & Payment Processing Services,cache,3783,2010-12-15,2025-12-30,305.1000061035156,142927781.06384277,True,True,True,True
+CPB,CPB,Campbell's Company (The),Consumer Staples,Packaged Foods & Meats,cache,5534,2004-01-02,2025-12-30,27.161548614501957,157362981.09169006,True,True,True,True
+CPRT,CPRT,Copart,Industrials,Diversified Support Services,cache,5534,2004-01-02,2025-12-30,39.5,293001750.9727478,True,True,True,True
+CPT,CPT,Camden Property Trust,Real Estate,Multi-Family Residential REITs,cache,5534,2004-01-02,2025-12-30,109.52045440673828,95180724.31106567,True,True,True,True
+CRH,CRH,CRH plc,Materials,Construction Materials,cache,5534,2004-01-02,2025-12-30,125.3683624267578,405131841.5359497,True,True,True,True
+CRL,CRL,Charles River Laboratories,Health Care,Life Sciences Tools & Services,cache,5534,2004-01-02,2025-12-30,201.97999572753903,136546062.02545166,True,True,True,True
+CRM,CRM,Salesforce,Information Technology,Application Software,cache,5416,2004-06-23,2025-12-30,265.2566223144531,1831445023.1399536,True,True,True,True
+CRWD,CRWD,CrowdStrike,Information Technology,Systems Software,cache,1648,2019-06-12,2025-12-30,475.6300048828125,1122054115.9667969,True,True,True,True
+CSCO,CSCO,Cisco,Information Technology,Communications Equipment,cache,5534,2004-01-02,2025-12-30,76.5830078125,1228409536.7469788,True,True,True,True
+CSGP,CSGP,CoStar Group,Real Estate,Real Estate Services,cache,5534,2004-01-02,2025-12-30,67.86000061035156,230062098.99215698,True,True,True,True
+CSX,CSX,CSX Corporation,Industrials,Rail Transportation,cache,5534,2004-01-02,2025-12-30,36.30044937133789,470988755.04016876,True,True,True,True
+CTAS,CTAS,Cintas,Industrials,Diversified Support Services,cache,5534,2004-01-02,2025-12-30,189.9132080078125,344052898.61526483,True,True,True,True
+CTRA,CTRA,Coterra,Energy,Oil & Gas Exploration & Production,cache,5534,2004-01-02,2025-12-30,26.36785316467285,168629360.1313591,True,True,True,True
+CTSH,CTSH,Cognizant,Information Technology,IT Consulting & Other Services,cache,5534,2004-01-02,2025-12-30,83.7140121459961,281455910.3012085,True,True,True,True
+CTVA,CTVA,Corteva,Materials,Fertilizers & Agricultural Chemicals,cache,1660,2019-05-24,2025-12-30,67.2186508178711,252979083.5741043,True,True,True,True
+CVNA,CVNA,Carvana,Consumer Discretionary,Automotive Retail,cache,2181,2017-04-28,2025-12-30,429.5499877929688,977264048.4985352,True,True,True,True
+CVS,CVS,CVS Health,Health Care,Health Care Services,cache,5534,2004-01-02,2025-12-30,78.50929260253906,484198429.87480164,True,True,True,True
+CVX,CVX,Chevron Corporation,Energy,Integrated Oil & Gas,cache,5534,2004-01-02,2025-12-30,150.83447265625,1160017140.9698486,True,True,True,True
+D,D,Dominion Energy,Utilities,Multi-Utilities,cache,5534,2004-01-02,2025-12-30,58.43723678588867,264334380.28945923,True,True,True,True
+DAL,DAL,Delta Air Lines,Industrials,Passenger Airlines,cache,4696,2007-05-03,2025-12-30,69.15210723876953,449502813.3670807,True,True,True,True
+DASH,DASH,DoorDash,Consumer Discretionary,Specialized Consumer Services,cache,1270,2020-12-09,2025-12-30,228.1300048828125,803349593.4875488,True,True,True,True
+DD,DD,DuPont,Materials,Specialty Chemicals,cache,5534,2004-01-02,2025-12-30,40.51741027832031,216547427.25912094,True,True,True,True
+DDOG,DDOG,Datadog,Information Technology,Application Software,cache,1579,2019-09-19,2025-12-30,137.47999572753906,608799729.2541504,True,True,True,True
+DE,DE,Deere & Company,Industrials,Agricultural & Farm Machinery,cache,5534,2004-01-02,2025-12-30,466.9542541503906,572798380.5480957,True,True,True,True
+DECK,DECK,Deckers Brands,Consumer Discretionary,Footwear,cache,5534,2004-01-02,2025-12-30,105.02999877929688,307105139.912796,True,True,True,True
+DELL,DELL,Dell Technologies,Information Technology,"Technology Hardware, Storage & Peripherals",cache,2356,2016-08-17,2025-12-30,126.9699478149414,741414764.3966675,True,True,True,True
+DG,DG,Dollar General,Consumer Staples,Consumer Staples Merchandise Retail,cache,4056,2009-11-13,2025-12-30,134.60491943359375,304284356.7466736,True,True,True,True
+DGX,DGX,Quest Diagnostics,Health Care,Health Care Services,cache,5534,2004-01-02,2025-12-30,173.93336486816406,168526603.0090332,True,True,True,True
+DHI,DHI,D. R. Horton,Consumer Discretionary,Homebuilding,cache,5534,2004-01-02,2025-12-30,145.1160888671875,497575120.677948,True,True,True,True
+DHR,DHR,Danaher Corporation,Health Care,Life Sciences Tools & Services,cache,5534,2004-01-02,2025-12-30,230.1793365478516,732291194.4320679,True,True,True,True
+DIS,DIS,Walt Disney Company (The),Communication Services,Movies & Entertainment,cache,5534,2004-01-02,2025-12-30,114.79000091552734,880163142.2393799,True,True,True,True
+DLR,DLR,Digital Realty,Real Estate,Data Center REITs,cache,5326,2004-10-29,2025-12-30,155.33236694335938,254548363.93432617,True,True,True,True
+DLTR,DLTR,Dollar Tree,Consumer Staples,Consumer Staples Merchandise Retail,cache,5534,2004-01-02,2025-12-30,124.0199966430664,378722335.5712891,True,True,True,True
+DOC,DOC,Healthpeak Properties,Real Estate,Health Care REITs,cache,5534,2004-01-02,2025-12-30,15.796907424926758,114032621.81549072,True,True,True,True
+DOV,DOV,Dover Corporation,Industrials,Industrial Machinery & Supplies & Components,cache,5534,2004-01-02,2025-12-30,197.32720947265625,181981390.35949707,True,True,True,True
+DOW,DOW,Dow Inc.,Materials,Commodity Chemicals,cache,1706,2019-03-20,2025-12-30,23.234798431396484,276167161.61785126,True,True,True,True
+DPZ,DPZ,Domino's,Consumer Discretionary,Restaurants,cache,5403,2004-07-13,2025-12-30,419.7996520996094,246042887.45269775,True,True,True,True
+DRI,DRI,Darden Restaurants,Consumer Discretionary,Restaurants,cache,5534,2004-01-02,2025-12-30,182.17747497558597,216170467.0059204,True,True,True,True
+DTE,DTE,DTE Energy,Utilities,Multi-Utilities,cache,5534,2004-01-02,2025-12-30,128.76913452148438,149882389.30892944,True,True,True,True
+DUK,DUK,Duke Energy,Utilities,Electric Utilities,cache,5534,2004-01-02,2025-12-30,116.68618774414062,345173381.18362427,True,True,True,True
+DVA,DVA,DaVita,Health Care,Health Care Services,cache,5534,2004-01-02,2025-12-30,113.81999969482422,92074930.40008545,True,True,True,True
+DVN,DVN,Devon Energy,Energy,Oil & Gas Exploration & Production,cache,5534,2004-01-02,2025-12-30,36.628684997558594,239840520.0656891,True,True,True,True
+DXCM,DXCM,Dexcom,Health Care,Health Care Equipment,cache,5212,2005-04-14,2025-12-30,67.05999755859375,312314616.1907196,True,True,True,True
+EA,EA,Electronic Arts,Communication Services,Interactive Home Entertainment,cache,5534,2004-01-02,2025-12-30,204.15684509277344,430360644.3283081,True,True,True,True
+EBAY,EBAY,eBay Inc.,Consumer Discretionary,Broadline Retail,cache,5534,2004-01-02,2025-12-30,86.8097915649414,421545186.3182068,True,True,True,True
+ECL,ECL,Ecolab,Materials,Specialty Chemicals,cache,5534,2004-01-02,2025-12-30,263.7730712890625,339525831.8359375,True,True,True,True
+ED,ED,Consolidated Edison,Utilities,Multi-Utilities,cache,5534,2004-01-02,2025-12-30,99.11136627197266,196066683.2572937,True,True,True,True
+EFX,EFX,Equifax,Industrials,Research & Consulting Services,cache,5534,2004-01-02,2025-12-30,220.17514038085935,251506572.89886475,True,True,True,True
+EG,EG,Everest Group,Financials,Reinsurance,cache,5534,2004-01-02,2025-12-30,339.14263916015625,107007189.02130127,True,True,True,True
+EIX,EIX,Edison International,Utilities,Electric Utilities,cache,5534,2004-01-02,2025-12-30,58.764739990234375,160150726.77516937,True,True,True,True
+EL,EL,Estée Lauder Companies (The),Consumer Staples,Personal Care Products,cache,5534,2004-01-02,2025-12-30,105.50894927978516,309372931.85043335,True,True,True,True
+ELV,ELV,Elevance Health,Health Care,Managed Health Care,cache,5534,2004-01-02,2025-12-30,346.6630249023437,586434371.6003418,True,True,True,True
+EME,EME,Emcor,Industrials,Construction & Engineering,cache,5534,2004-01-02,2025-12-30,616.6246948242188,233981868.8079834,True,True,True,True
+EMR,EMR,Emerson Electric,Industrials,Electrical Components & Equipment,cache,5534,2004-01-02,2025-12-30,134.7720947265625,338033871.8887329,True,True,True,True
+EOG,EOG,EOG Resources,Energy,Oil & Gas Exploration & Production,cache,5534,2004-01-02,2025-12-30,103.85591888427734,356431686.3555908,True,True,True,True
+EPAM,EPAM,EPAM Systems,Information Technology,IT Consulting & Other Services,cache,3494,2012-02-08,2025-12-30,206.30999755859372,118448149.92828369,True,True,True,True
+EQIX,EQIX,Equinix,Real Estate,Data Center REITs,cache,5534,2004-01-02,2025-12-30,765.53759765625,376664362.38098145,True,True,True,True
+EQR,EQR,Equity Residential,Real Estate,Multi-Family Residential REITs,cache,5534,2004-01-02,2025-12-30,62.05046081542969,117454292.53101349,True,True,True,True
+EQT,EQT,EQT Corporation,Energy,Oil & Gas Exploration & Production,cache,5534,2004-01-02,2025-12-30,54.4764404296875,412097731.3819885,True,True,True,True
+ERIE,ERIE,Erie Indemnity,Financials,Insurance Brokers,cache,5534,2004-01-02,2025-12-30,284.70904541015625,39142461.849975586,True,True,True,True
+ES,ES,Eversource Energy,Utilities,Electric Utilities,cache,5534,2004-01-02,2025-12-30,66.84329223632812,154824655.46035767,True,True,True,True
+ESS,ESS,Essex Property Trust,Real Estate,Multi-Family Residential REITs,cache,5534,2004-01-02,2025-12-30,258.5381774902344,103126023.26202393,True,True,True,True
+ETN,ETN,Eaton Corporation,Industrials,Electrical Components & Equipment,cache,5534,2004-01-02,2025-12-30,319.8625793457031,809356605.7250977,True,True,True,True
+ETR,ETR,Entergy,Utilities,Electric Utilities,cache,5534,2004-01-02,2025-12-30,92.75999450683594,230193877.9663086,True,True,True,True
+EVRG,EVRG,Evergy,Utilities,Electric Utilities,cache,5534,2004-01-02,2025-12-30,72.58802032470703,141591329.6218872,True,True,True,True
+EW,EW,Edwards Lifesciences,Health Care,Health Care Equipment,cache,5534,2004-01-02,2025-12-30,86.19999694824219,291564710.5239868,True,True,True,True
+EXC,EXC,Exelon,Utilities,Electric Utilities,cache,5534,2004-01-02,2025-12-30,43.547119140625,262041341.2475586,True,True,True,True
+EXE,EXE,Expand Energy,Energy,Oil & Gas Exploration & Production,cache,1228,2021-02-10,2025-12-30,111.41165161132812,335250609.0335846,True,True,True,True
+EXPD,EXPD,Expeditors International,Industrials,Air Freight & Logistics,cache,5534,2004-01-02,2025-12-30,150.1199951171875,140580123.9395142,True,True,True,True
+EXPE,EXPE,Expedia Group,Consumer Discretionary,"Hotels, Resorts & Cruise Lines",cache,5144,2005-07-21,2025-12-30,284.3830261230469,334339468.6088562,True,True,True,True
+EXR,EXR,Extra Space Storage,Real Estate,Self-Storage REITs,cache,5379,2004-08-16,2025-12-30,130.0524139404297,145781972.61390686,True,True,True,True
+F,F,Ford Motor Company,Consumer Discretionary,Automobile Manufacturers,cache,5534,2004-01-02,2025-12-30,13.088249206542969,740057672.8560925,True,True,True,True
+FANG,FANG,Diamondback Energy,Energy,Oil & Gas Exploration & Production,cache,3322,2012-10-12,2025-12-30,150.35128784179688,257039116.1643982,True,True,True,True
+FAST,FAST,Fastenal,Industrials,Trading Companies & Distributors,cache,5534,2004-01-02,2025-12-30,40.42969512939453,265005701.94339752,True,True,True,True
+FCX,FCX,Freeport-McMoRan,Materials,Copper,cache,5534,2004-01-02,2025-12-30,51.1695442199707,618001201.1127472,True,True,True,True
+FDS,FDS,FactSet,Financials,Financial Exchanges & Data,cache,5534,2004-01-02,2025-12-30,289.9040222167969,179778030.99212646,True,True,True,True
+FDX,FDX,FedEx,Industrials,Air Freight & Logistics,cache,5534,2004-01-02,2025-12-30,289.8847351074219,399522959.92507935,True,True,True,True
+FE,FE,FirstEnergy,Utilities,Electric Utilities,cache,5534,2004-01-02,2025-12-30,44.53422164916992,177797376.39598846,True,True,True,True
+FFIV,FFIV,"F5, Inc.",Information Technology,Communications Equipment,cache,5534,2004-01-02,2025-12-30,259.3699951171875,172428306.5574646,True,True,True,True
+FICO,FICO,Fair Isaac,Information Technology,Application Software,cache,5534,2004-01-02,2025-12-30,1745.75,409622125.40283203,True,True,True,True
+FIS,FIS,Fidelity National Information Services,Financials,Transaction & Payment Processing Services,cache,5534,2004-01-02,2025-12-30,66.59745025634766,215113946.89102173,True,True,True,True
+FISV,FISV,Fiserv,Financials,Transaction & Payment Processing Services,cache,5533,2004-01-02,2025-12-30,67.54000091552734,567343453.4584045,True,True,True,True
+FITB,FITB,Fifth Third Bancorp,Financials,Regional Banks,cache,5534,2004-01-02,2025-12-30,46.70806503295898,219924706.2757492,True,True,True,True
+FIX,FIX,Comfort Systems USA,Industrials,Construction & Engineering,cache,5534,2004-01-02,2025-12-30,946.4383544921876,286027733.9935303,True,True,True,True
+FOX,FOX,Fox Corporation (Class B),Communication Services,Broadcasting,cache,1711,2019-03-13,2025-12-30,65.04045867919922,65088779.128074646,True,True,True,True
+FOXA,FOXA,Fox Corporation (Class A),Communication Services,Broadcasting,cache,1712,2019-03-12,2025-12-30,73.3402328491211,187353668.0923462,True,True,True,True
+FRT,FRT,Federal Realty Investment Trust,Real Estate,Retail REITs,cache,5534,2004-01-02,2025-12-30,99.5976333618164,55891823.194885254,True,True,True,True
+FSLR,FSLR,First Solar,Information Technology,Semiconductors,cache,4808,2006-11-17,2025-12-30,264.29998779296875,489576524.1958618,True,True,True,True
+FTNT,FTNT,Fortinet,Information Technology,Systems Software,cache,4053,2009-11-18,2025-12-30,80.30999755859375,415255301.4690399,True,True,True,True
+FTV,FTV,Fortive,Industrials,Industrial Machinery & Supplies & Components,cache,2387,2016-07-05,2025-12-30,55.87885284423828,160141735.59188843,True,True,True,True
+GD,GD,General Dynamics,Industrials,Aerospace & Defense,cache,5534,2004-01-02,2025-12-30,336.5257873535156,326207726.48620605,True,True,True,True
+GDDY,GDDY,GoDaddy,Information Technology,Internet Services & Infrastructure,cache,2705,2015-03-31,2025-12-30,126.08000183105467,204776787.48931885,True,True,True,True
+GE,GE,GE Aerospace,Industrials,Aerospace & Defense,cache,5534,2004-01-02,2025-12-30,311.33648681640625,1195810305.6518555,True,True,True,True
+GEHC,GEHC,GE HealthCare,Health Care,Health Care Equipment,cache,762,2022-12-15,2025-12-30,83.25641632080078,237441968.1213379,True,True,True,True
+GEN,GEN,Gen Digital,Information Technology,Systems Software,cache,5534,2004-01-02,2025-12-30,27.314245223999023,96166840.66152573,True,True,True,True
+GEV,GEV,GE Vernova,Industrials,Heavy Electrical Equipment,cache,442,2024-03-27,2025-12-30,658.75634765625,1607312659.3414307,True,True,True,True
+GILD,GILD,Gilead Sciences,Health Care,Biotechnology,cache,5534,2004-01-02,2025-12-30,122.48440551757812,708618288.3655548,True,True,True,True
+GIS,GIS,General Mills,Consumer Staples,Packaged Foods & Meats,cache,5534,2004-01-02,2025-12-30,45.257904052734375,260008283.79249573,True,True,True,True
+GL,GL,Globe Life,Financials,Life & Health Insurance,cache,5534,2004-01-02,2025-12-30,140.85231018066406,72663459.43527222,True,True,True,True
+GLW,GLW,Corning Inc.,Information Technology,Electronic Components,cache,5534,2004-01-02,2025-12-30,88.6944580078125,480401011.86447144,True,True,True,True
+GM,GM,General Motors,Consumer Discretionary,Automobile Manufacturers,cache,3801,2010-11-18,2025-12-30,82.1355209350586,461097759.0467453,True,True,True,True
+GNRC,GNRC,Generac,Industrials,Electrical Components & Equipment,cache,3996,2010-02-11,2025-12-30,137.86000061035156,152775870.97930908,True,True,True,True
+GOOG,GOOG,Alphabet Inc. (Class C),Communication Services,Interactive Media & Services,cache,5376,2004-08-19,2025-12-30,314.3285522460937,5028544014.044952,True,True,True,True
+GOOGL,GOOGL,Alphabet Inc. (Class A),Communication Services,Interactive Media & Services,cache,5376,2004-08-19,2025-12-30,313.6292419433594,7866419522.067261,True,True,True,True
+GPC,GPC,Genuine Parts Company,Consumer Discretionary,Distributors,cache,5534,2004-01-02,2025-12-30,122.90418243408205,134236405.77278137,True,True,True,True
+GPN,GPN,Global Payments,Financials,Transaction & Payment Processing Services,cache,5534,2004-01-02,2025-12-30,79.05047607421875,176675331.83822632,True,True,True,True
+GRMN,GRMN,Garmin,Consumer Discretionary,Consumer Electronics,cache,5534,2004-01-02,2025-12-30,204.30697631835935,180243936.10992432,True,True,True,True
+GS,GS,Goldman Sachs,Financials,Investment Banking & Brokerage,cache,5534,2004-01-02,2025-12-30,879.7898559570312,1391732302.3345947,True,True,True,True
+GWW,GWW,W. W. Grainger,Industrials,Industrial Machinery & Supplies & Components,cache,5534,2004-01-02,2025-12-30,1019.1632080078124,270167139.4317627,True,True,True,True
+HAL,HAL,Halliburton,Energy,Oil & Gas Equipment & Services,cache,5534,2004-01-02,2025-12-30,28.35264015197754,267190509.72385406,True,True,True,True
+HAS,HAS,Hasbro,Consumer Discretionary,Leisure Products,cache,5534,2004-01-02,2025-12-30,82.10392761230469,127178482.86972046,True,True,True,True
+HBAN,HBAN,Huntington Bancshares,Financials,Regional Banks,cache,5534,2004-01-02,2025-12-30,17.294050216674805,442534876.36680603,True,True,True,True
+HCA,HCA,HCA Healthcare,Health Care,Health Care Facilities,cache,3725,2011-03-10,2025-12-30,472.55712890625,515973105.7510376,True,True,True,True
+HD,HD,Home Depot (The),Consumer Discretionary,Home Improvement Retail,cache,5534,2004-01-02,2025-12-30,344.0498352050781,1234434953.2287598,True,True,True,True
+HIG,HIG,Hartford (The),Financials,Property & Casualty Insurance,cache,5534,2004-01-02,2025-12-30,138.24847412109375,182352383.4953308,True,True,True,True
+HII,HII,Huntington Ingalls Industries,Industrials,Aerospace & Defense,cache,3717,2011-03-22,2025-12-30,340.9147033691406,112897228.60717773,True,True,True,True
+HLT,HLT,Hilton Worldwide,Consumer Discretionary,"Hotels, Resorts & Cruise Lines",cache,3030,2013-12-12,2025-12-30,290.2929382324219,429066112.1047973,True,True,True,True
+HON,HON,Honeywell,Industrials,Industrial Conglomerates,cache,5534,2004-01-02,2025-12-30,195.3899383544922,793881365.8869095,True,True,True,True
+HOOD,HOOD,Robinhood Markets,Financials,Investment Banking & Brokerage,cache,1111,2021-07-29,2025-12-30,115.4499969482422,3849217235.503006,True,True,True,True
+HPE,HPE,Hewlett Packard Enterprise,Information Technology,"Technology Hardware, Storage & Peripherals",cache,2565,2015-10-19,2025-12-30,23.91578865051269,511023218.3021546,True,True,True,True
+HPQ,HPQ,HP Inc.,Information Technology,"Technology Hardware, Storage & Peripherals",cache,5534,2004-01-02,2025-12-30,22.534379959106445,241022802.60753632,True,True,True,True
+HRL,HRL,Hormel Foods,Consumer Staples,Packaged Foods & Meats,cache,5534,2004-01-02,2025-12-30,23.345123291015625,93248942.18883514,True,True,True,True
+HSIC,HSIC,Henry Schein,Health Care,Health Care Distributors,cache,5534,2004-01-02,2025-12-30,76.44000244140625,99694895.85342407,True,True,True,True
+HST,HST,Host Hotels & Resorts,Real Estate,Hotel & Resort REITs,cache,5534,2004-01-02,2025-12-30,17.75075912475586,121495961.54475212,True,True,True,True
+HSY,HSY,Hershey Company (The),Consumer Staples,Packaged Foods & Meats,cache,5534,2004-01-02,2025-12-30,181.00149536132807,250217384.86022943,True,True,True,True
+HUBB,HUBB,Hubbell Incorporated,Industrials,Industrial Machinery & Supplies & Components,cache,5534,2004-01-02,2025-12-30,445.400146484375,210917297.12564087,True,True,True,True
+HUM,HUM,Humana,Health Care,Managed Health Care,cache,5534,2004-01-02,2025-12-30,257.740966796875,396088834.42840576,True,True,True,True
+HWM,HWM,Howmet Aerospace,Industrials,Aerospace & Defense,cache,2303,2016-11-01,2025-12-30,207.6910400390625,403860298.8632202,True,True,True,True
+IBKR,IBKR,Interactive Brokers,Financials,Investment Banking & Brokerage,cache,4695,2007-05-04,2025-12-30,64.93025970458984,264669542.55638123,True,True,True,True
+IBM,IBM,IBM,Information Technology,IT Consulting & Other Services,cache,5534,2004-01-02,2025-12-30,300.3376159667969,1159998498.6557004,True,True,True,True
+ICE,ICE,Intercontinental Exchange,Financials,Financial Exchanges & Data,cache,5061,2005-11-16,2025-12-30,162.63462829589844,510201599.7772217,True,True,True,True
+IDXX,IDXX,Idexx Laboratories,Health Care,Health Care Equipment,cache,5534,2004-01-02,2025-12-30,682.3200073242188,288224505.50231934,True,True,True,True
+IEX,IEX,IDEX Corporation,Industrials,Industrial Machinery & Supplies & Components,cache,5534,2004-01-02,2025-12-30,178.6282501220703,105512399.3309021,True,True,True,True
+IFF,IFF,International Flavors & Fragrances,Materials,Specialty Chemicals,cache,5534,2004-01-02,2025-12-30,67.53117370605469,130395126.60255432,True,True,True,True
+INCY,INCY,Incyte,Health Care,Biotechnology,cache,5534,2004-01-02,2025-12-30,98.91000366210938,151261265.47966003,True,True,True,True
+INTC,INTC,Intel,Information Technology,Semiconductors,cache,5534,2004-01-02,2025-12-30,37.29999923706055,2803990336.5623474,True,True,True,True
+INTU,INTU,Intuit,Information Technology,Application Software,cache,5534,2004-01-02,2025-12-30,666.5885620117188,1121381974.1882324,True,True,True,True
+INVH,INVH,Invitation Homes,Real Estate,Single-Family Residential REITs,cache,2241,2017-02-01,2025-12-30,27.622997283935547,120111932.3515892,True,True,True,True
+IP,IP,International Paper,Materials,Paper & Plastic Packaging Products & Materials,cache,5534,2004-01-02,2025-12-30,39.33753204345703,176052848.67362976,True,True,True,True
+IQV,IQV,IQVIA,Health Care,Life Sciences Tools & Services,cache,3181,2013-05-09,2025-12-30,227.69000244140625,279003154.586029,True,True,True,True
+IR,IR,Ingersoll Rand,Industrials,Industrial Machinery & Supplies & Components,cache,2171,2017-05-12,2025-12-30,80.63237762451172,225363243.0568695,True,True,True,True
+IRM,IRM,Iron Mountain,Real Estate,Other Specialized REITs,cache,5534,2004-01-02,2025-12-30,82.68588256835938,129729832.2479248,True,True,True,True
+ISRG,ISRG,Intuitive Surgical,Health Care,Health Care Equipment,cache,5534,2004-01-02,2025-12-30,572.6300048828125,952101497.2320557,True,True,True,True
+IT,IT,Gartner,Information Technology,IT Consulting & Other Services,cache,5534,2004-01-02,2025-12-30,254.58999633789065,292573642.4316406,True,True,True,True
+ITW,ITW,Illinois Tool Works,Industrials,Industrial Machinery & Supplies & Components,cache,5534,2004-01-02,2025-12-30,247.6537933349609,243034263.97399902,True,True,True,True
+IVZ,IVZ,Invesco,Financials,Asset Management & Custody Banks,cache,5534,2004-01-02,2025-12-30,26.248157501220703,94650411.03191376,True,True,True,True
+J,J,Jacobs Solutions,Industrials,Construction & Engineering,cache,5534,2004-01-02,2025-12-30,133.59388732910156,105734202.92816162,True,True,True,True
+JBHT,JBHT,J.B. Hunt,Industrials,Cargo Ground Transportation,cache,5534,2004-01-02,2025-12-30,195.81802368164065,169585366.1743164,True,True,True,True
+JBL,JBL,Jabil,Information Technology,Electronic Manufacturing Services,cache,5534,2004-01-02,2025-12-30,231.4972381591797,263363969.66323853,True,True,True,True
+JCI,JCI,Johnson Controls,Industrials,Building Products,cache,5534,2004-01-02,2025-12-30,120.5683364868164,453944547.16911316,True,True,True,True
+JKHY,JKHY,Jack Henry & Associates,Financials,Transaction & Payment Processing Services,cache,5534,2004-01-02,2025-12-30,183.88162231445312,127540378.96270752,True,True,True,True
+JNJ,JNJ,Johnson & Johnson,Health Care,Pharmaceuticals,cache,5534,2004-01-02,2025-12-30,205.81585693359372,1479398510.3675842,True,True,True,True
+JPM,JPM,JPMorgan Chase,Financials,Diversified Banks,cache,5534,2004-01-02,2025-12-30,320.328369140625,2305423364.79187,True,True,True,True
+KDP,KDP,Keurig Dr Pepper,Consumer Staples,Soft Drinks & Non-alcoholic Beverages,cache,4441,2008-05-07,2025-12-30,27.674413681030277,417371525.9797096,True,True,True,True
+KEY,KEY,KeyCorp,Financials,Regional Banks,cache,5534,2004-01-02,2025-12-30,20.526763916015625,399939736.39860153,True,True,True,True
+KEYS,KEYS,Keysight Technologies,Information Technology,Electronic Equipment & Instruments,cache,2816,2014-10-20,2025-12-30,206.00999450683597,164316336.45248413,True,True,True,True
+KHC,KHC,Kraft Heinz,Consumer Staples,Packaged Foods & Meats,cache,2639,2015-07-06,2025-12-30,24.02669906616211,337537474.652195,True,True,True,True
+KIM,KIM,Kimco Realty,Real Estate,Retail REITs,cache,5534,2004-01-02,2025-12-30,20.134838104248047,79579683.94756317,True,True,True,True
+KKR,KKR,KKR & Co.,Financials,Asset Management & Custody Banks,cache,3890,2010-07-15,2025-12-30,128.40606689453125,479054737.0185852,True,True,True,True
+KLAC,KLAC,KLA Corporation,Information Technology,Semiconductor Materials & Equipment,cache,5534,2004-01-02,2025-12-30,1242.0361328125,966388102.2796631,True,True,True,True
+KMB,KMB,Kimberly-Clark,Consumer Staples,Household Products,cache,5534,2004-01-02,2025-12-30,100.33074951171876,304388318.2659149,True,True,True,True
+KMI,KMI,Kinder Morgan,Energy,Oil & Gas Storage & Transportation,cache,3743,2011-02-11,2025-12-30,27.314964294433597,362615811.7046356,True,True,True,True
+KO,KO,Coca-Cola Company (The),Consumer Staples,Soft Drinks & Non-alcoholic Beverages,cache,5534,2004-01-02,2025-12-30,69.59149169921875,988793136.434555,True,True,True,True
+KR,KR,Kroger,Consumer Staples,Food Retail,cache,5534,2004-01-02,2025-12-30,62.367225646972656,418994915.26794434,True,True,True,True
+KVUE,KVUE,Kenvue,Consumer Staples,Personal Care Products,cache,667,2023-05-04,2025-12-30,17.13323974609375,454543940.5655861,True,True,True,True
+L,L,Loews Corporation,Financials,Multi-line Insurance,cache,5534,2004-01-02,2025-12-30,106.12881469726562,74499345.0252533,True,True,True,True
+LDOS,LDOS,Leidos,Industrials,Diversified Support Services,cache,4831,2006-10-17,2025-12-30,182.89654541015625,141974398.89450073,True,True,True,True
+LEN,LEN,Lennar,Consumer Discretionary,Homebuilding,cache,5534,2004-01-02,2025-12-30,102.8829345703125,402544755.9112549,True,True,True,True
+LH,LH,Labcorp,Health Care,Health Care Services,cache,5534,2004-01-02,2025-12-30,252.4365081787109,153868507.6171875,True,True,True,True
+LHX,LHX,L3Harris,Industrials,Aerospace & Defense,cache,5534,2004-01-02,2025-12-30,294.4443359375,292415996.3317871,True,True,True,True
+LII,LII,Lennox International,Industrials,Building Products,cache,5534,2004-01-02,2025-12-30,491.2573547363281,217579154.12597656,True,True,True,True
+LIN,LIN,Linde plc,Materials,Industrial Gases,cache,5534,2004-01-02,2025-12-30,426.9259643554688,826728798.3337402,True,True,True,True
+LITE,LITE,Lumentum,Information Technology,Communications Equipment,cache,2626,2015-07-23,2025-12-30,371.1799926757813,541453573.1414795,True,True,True,True
+LLY,LLY,Lilly (Eli),Health Care,Pharmaceuticals,cache,5534,2004-01-02,2025-12-30,1077.950927734375,2911680780.13916,True,True,True,True
+LMT,LMT,Lockheed Martin,Industrials,Aerospace & Defense,cache,5534,2004-01-02,2025-12-30,485.441650390625,611056379.5639038,True,True,True,True
+LNT,LNT,Alliant Energy,Utilities,Electric Utilities,cache,5534,2004-01-02,2025-12-30,64.892333984375,118724690.64865112,True,True,True,True
+LOW,LOW,Lowe's,Consumer Discretionary,Home Improvement Retail,cache,5534,2004-01-02,2025-12-30,240.9362030029297,617628982.9421997,True,True,True,True
+LRCX,LRCX,Lam Research,Information Technology,Semiconductor Materials & Equipment,cache,5534,2004-01-02,2025-12-30,173.57203674316406,1325659852.494812,True,True,True,True
+LULU,LULU,Lululemon Athletica,Consumer Discretionary,"Apparel, Accessories & Luxury Goods",cache,4637,2007-07-27,2025-12-30,210.6699981689453,686107364.9101257,True,True,True,True
+LUV,LUV,Southwest Airlines,Industrials,Passenger Airlines,cache,5534,2004-01-02,2025-12-30,41.09249496459961,277386790.6856537,True,True,True,True
+LVS,LVS,Las Vegas Sands,Consumer Discretionary,Casinos & Gaming,cache,5294,2004-12-15,2025-12-30,64.7621078491211,268788116.20140076,True,True,True,True
+LYB,LYB,LyondellBasell,Materials,Specialty Chemicals,cache,3944,2010-04-28,2025-12-30,43.136260986328125,228603721.21009827,True,True,True,True
+LYV,LYV,Live Nation Entertainment,Communication Services,Movies & Entertainment,cache,5037,2005-12-21,2025-12-30,144.08999633789062,339567710.65826416,True,True,True,True
+MA,MA,Mastercard,Financials,Transaction & Payment Processing Services,cache,4931,2006-05-25,2025-12-30,575.5648803710938,1412553452.8747559,True,True,True,True
+MAA,MAA,Mid-America Apartment Communities,Real Estate,Multi-Family Residential REITs,cache,5534,2004-01-02,2025-12-30,136.663818359375,115219881.24160767,True,True,True,True
+MAR,MAR,Marriott International,Consumer Discretionary,"Hotels, Resorts & Cruise Lines",cache,5534,2004-01-02,2025-12-30,313.3345947265625,368473786.53564453,True,True,True,True
+MAS,MAS,Masco,Industrials,Building Products,cache,5534,2004-01-02,2025-12-30,63.92633438110352,146498523.70681763,True,True,True,True
+MCD,MCD,McDonald's,Consumer Discretionary,Restaurants,cache,5534,2004-01-02,2025-12-30,306.3188171386719,914131916.8457031,True,True,True,True
+MCHP,MCHP,Microchip Technology,Information Technology,Semiconductors,cache,5534,2004-01-02,2025-12-30,64.3013916015625,471136589.2478943,True,True,True,True
+MCK,MCK,McKesson Corporation,Health Care,Health Care Distributors,cache,5534,2004-01-02,2025-12-30,826.6429443359375,516959223.57177734,True,True,True,True
+MCO,MCO,Moody's Corporation,Financials,Financial Exchanges & Data,cache,5534,2004-01-02,2025-12-30,514.6376953125,346522238.16070557,True,True,True,True
+MDLZ,MDLZ,Mondelez International,Consumer Staples,Packaged Foods & Meats,cache,5534,2004-01-02,2025-12-30,53.84382247924805,451211134.51309204,True,True,True,True
+MDT,MDT,Medtronic,Health Care,Health Care Equipment,cache,5534,2004-01-02,2025-12-30,95.877197265625,598001099.4190216,True,True,True,True
+MET,MET,MetLife,Financials,Life & Health Insurance,cache,5534,2004-01-02,2025-12-30,79.21235656738281,227686079.78134155,True,True,True,True
+META,META,Meta Platforms,Communication Services,Interactive Media & Services,cache,3424,2012-05-18,2025-12-30,665.3803100585938,8444058518.966675,True,True,True,True
+MGM,MGM,MGM Resorts,Consumer Discretionary,Casinos & Gaming,cache,5534,2004-01-02,2025-12-30,36.72999954223633,152089899.8117447,True,True,True,True
+MKC,MKC,McCormick & Company,Consumer Staples,Packaged Foods & Meats,cache,5534,2004-01-02,2025-12-30,67.87499237060547,154196170.73669434,True,True,True,True
+MLM,MLM,Martin Marietta Materials,Materials,Construction Materials,cache,5534,2004-01-02,2025-12-30,630.6453857421875,203725752.10266113,True,True,True,True
+MMM,MMM,3M,Industrials,Industrial Conglomerates,cache,5534,2004-01-02,2025-12-30,160.45004272460938,446197482.0831299,True,True,True,True
+MNST,MNST,Monster Beverage,Consumer Staples,Soft Drinks & Non-alcoholic Beverages,cache,5534,2004-01-02,2025-12-30,77.41000366210938,326459329.4286728,True,True,True,True
+MO,MO,Altria,Consumer Staples,Tobacco,cache,5534,2004-01-02,2025-12-30,56.81794738769531,454360426.98574066,True,True,True,True
+MOS,MOS,Mosaic Company (The),Materials,Fertilizers & Agricultural Chemicals,cache,5534,2004-01-02,2025-12-30,23.948060989379883,150616987.41149902,True,True,True,True
+MPC,MPC,Marathon Petroleum,Energy,Oil & Gas Refining & Marketing,cache,3651,2011-06-24,2025-12-30,163.00311279296875,322218234.98916626,True,True,True,True
+MPWR,MPWR,Monolithic Power Systems,Information Technology,Semiconductors,cache,5311,2004-11-19,2025-12-30,920.5095825195312,454697142.8222656,True,True,True,True
+MRK,MRK,Merck & Co.,Health Care,Pharmaceuticals,cache,5534,2004-01-02,2025-12-30,105.28021240234376,996984682.4165344,True,True,True,True
+MRNA,MRNA,Moderna,Health Care,Biotechnology,cache,1775,2018-12-07,2025-12-30,30.40999984741211,245117068.84393692,True,True,True,True
+MRSH,MRSH,Marsh McLennan,Financials,Insurance Brokers,cache,5534,2004-01-02,2025-12-30,185.4593505859375,492165982.47909546,True,True,True,True
+MS,MS,Morgan Stanley,Financials,Investment Banking & Brokerage,cache,5534,2004-01-02,2025-12-30,178.09820556640625,782631554.1473389,True,True,True,True
+MSCI,MSCI,MSCI Inc.,Financials,Financial Exchanges & Data,cache,4559,2007-11-15,2025-12-30,579.96435546875,340049469.1497803,True,True,True,True
+MSFT,MSFT,Microsoft,Information Technology,Systems Software,cache,5534,2004-01-02,2025-12-30,486.3699035644531,9954612563.842773,True,True,True,True
+MSI,MSI,Motorola Solutions,Information Technology,Communications Equipment,cache,5534,2004-01-02,2025-12-30,382.92822265625,400762703.7689209,True,True,True,True
+MTB,MTB,M&T Bank,Financials,Regional Banks,cache,5534,2004-01-02,2025-12-30,202.14285278320312,175579509.90600586,True,True,True,True
+MTD,MTD,Mettler Toledo,Health Care,Life Sciences Tools & Services,cache,5534,2004-01-02,2025-12-30,1414.3199462890625,186892451.02539062,True,True,True,True
+MU,MU,Micron Technology,Information Technology,Semiconductors,cache,5534,2004-01-02,2025-12-30,292.5071105957031,4018741509.3795776,True,True,True,True
+NCLH,NCLH,Norwegian Cruise Line Holdings,Consumer Discretionary,"Hotels, Resorts & Cruise Lines",cache,3257,2013-01-18,2025-12-30,22.43000030517578,315065014.1891479,True,True,True,True
+NDAQ,NDAQ,"Nasdaq, Inc.",Financials,Financial Exchanges & Data,cache,5534,2004-01-02,2025-12-30,97.87006378173828,266593842.710495,True,True,True,True
+NDSN,NDSN,Nordson Corporation,Industrials,Industrial Machinery & Supplies & Components,cache,5534,2004-01-02,2025-12-30,243.21229553222656,64332803.53469849,True,True,True,True
+NEE,NEE,NextEra Energy,Utilities,Multi-Utilities,cache,5534,2004-01-02,2025-12-30,79.98461151123047,686051737.6686096,True,True,True,True
+NEM,NEM,Newmont,Materials,Gold,cache,5534,2004-01-02,2025-12-30,101.6542739868164,767960088.0645752,True,True,True,True
+NFLX,NFLX,Netflix,Communication Services,Movies & Entertainment,cache,5534,2004-01-02,2025-12-30,93.77999877929688,3760306310.5564117,True,True,True,True
+NI,NI,NiSource,Utilities,Multi-Utilities,cache,5534,2004-01-02,2025-12-30,41.76348876953125,155297626.22089386,True,True,True,True
+NKE,NKE,"Nike, Inc.",Consumer Discretionary,"Apparel, Accessories & Luxury Goods",cache,5534,2004-01-02,2025-12-30,60.78652572631836,874289829.0851593,True,True,True,True
+NOC,NOC,Northrop Grumman,Industrials,Aerospace & Defense,cache,5534,2004-01-02,2025-12-30,572.7356567382812,391812689.7735596,True,True,True,True
+NOW,NOW,ServiceNow,Information Technology,Systems Software,cache,3395,2012-06-29,2025-12-30,154.22999572753906,1226857088.5238645,True,True,True,True
+NRG,NRG,NRG Energy,Utilities,Independent Power Producers & Energy Traders,cache,5534,2004-01-02,2025-12-30,159.93072509765625,343199696.94366455,True,True,True,True
+NSC,NSC,Norfolk Southern,Industrials,Rail Transportation,cache,5534,2004-01-02,2025-12-30,288.8338623046875,425568191.8243408,True,True,True,True
+NTAP,NTAP,NetApp,Information Technology,"Technology Hardware, Storage & Peripherals",cache,5534,2004-01-02,2025-12-30,107.3437042236328,193167248.93875122,True,True,True,True
+NTRS,NTRS,Northern Trust,Financials,Asset Management & Custody Banks,cache,5534,2004-01-02,2025-12-30,137.3599395751953,136048591.26853943,True,True,True,True
+NUE,NUE,Nucor,Materials,Steel,cache,5534,2004-01-02,2025-12-30,163.68174743652344,205435342.81845093,True,True,True,True
+NVDA,NVDA,Nvidia,Information Technology,Semiconductors,cache,5534,2004-01-02,2025-12-30,187.52984619140625,30340262190.717316,True,True,True,True
+NVR,NVR,"NVR, Inc.",Consumer Discretionary,Homebuilding,cache,5534,2004-01-02,2025-12-30,7327.2001953125,140577660.15625,True,True,True,True
+NWS,NWS,News Corp (Class B),Communication Services,Publishing,cache,3153,2013-06-19,2025-12-30,29.81007957458496,22730516.352653503,True,True,True,True
+NWSA,NWSA,News Corp (Class A),Communication Services,Publishing,cache,3153,2013-06-19,2025-12-30,26.28017807006836,88401190.1971817,True,True,True,True
+NXPI,NXPI,NXP Semiconductors,Information Technology,Semiconductors,cache,3874,2010-08-06,2025-12-30,218.84425354003903,521848493.9102173,True,True,True,True
+O,O,Realty Income,Real Estate,Retail REITs,cache,5534,2004-01-02,2025-12-30,56.02935791015625,294367487.17803955,True,True,True,True
+ODFL,ODFL,Old Dominion,Industrials,Cargo Ground Transportation,cache,5534,2004-01-02,2025-12-30,159.0878143310547,268578662.8730774,True,True,True,True
+OKE,OKE,Oneok,Energy,Oil & Gas Storage & Transportation,cache,5534,2004-01-02,2025-12-30,72.82255554199219,254669368.9743042,True,True,True,True
+OMC,OMC,Omnicom Group,Communication Services,Advertising,cache,5534,2004-01-02,2025-12-30,79.9324722290039,263130994.4934845,True,True,True,True
+ON,ON,ON Semiconductor,Information Technology,Semiconductors,cache,5534,2004-01-02,2025-12-30,54.2400016784668,417265937.13264465,True,True,True,True
+ORCL,ORCL,Oracle Corporation,Information Technology,Application Software,cache,5534,2004-01-02,2025-12-30,196.0055084228516,4342244050.105286,True,True,True,True
+ORLY,ORLY,O’Reilly Automotive,Consumer Discretionary,Automotive Retail,cache,5534,2004-01-02,2025-12-30,91.47000122070312,444800173.7957001,True,True,True,True
+OTIS,OTIS,Otis Worldwide,Industrials,Industrial Machinery & Supplies & Components,cache,1454,2020-03-19,2025-12-30,87.60712432861328,217365813.24005127,True,True,True,True
+OXY,OXY,Occidental Petroleum,Energy,Oil & Gas Exploration & Production,cache,5534,2004-01-02,2025-12-30,41.26407623291016,377358618.30825806,True,True,True,True
+PANW,PANW,Palo Alto Networks,Information Technology,Systems Software,cache,3381,2012-07-20,2025-12-30,186.8500061035156,1070955849.911499,True,True,True,True
+PAYX,PAYX,Paychex,Industrials,Human Resource & Employment Services,cache,5534,2004-01-02,2025-12-30,112.22303771972656,308843176.0093689,True,True,True,True
+PCAR,PCAR,Paccar,Industrials,Construction Machinery & Heavy Transportation Equipment,cache,5534,2004-01-02,2025-12-30,110.67183685302734,258809287.58316043,True,True,True,True
+PCG,PCG,PG&E Corporation,Utilities,Multi-Utilities,cache,5534,2004-01-02,2025-12-30,15.98414707183838,346933694.55280304,True,True,True,True
+PEG,PEG,Public Service Enterprise Group,Utilities,Electric Utilities,cache,5534,2004-01-02,2025-12-30,80.26495361328125,203380697.7470398,True,True,True,True
+PEP,PEP,PepsiCo,Consumer Staples,Soft Drinks & Non-alcoholic Beverages,cache,5534,2004-01-02,2025-12-30,142.8834686279297,1031095427.8892517,True,True,True,True
+PFE,PFE,Pfizer,Health Care,Pharmaceuticals,cache,5534,2004-01-02,2025-12-30,24.57828712463379,1073294073.3313562,True,True,True,True
+PFG,PFG,Principal Financial Group,Financials,Life & Health Insurance,cache,5534,2004-01-02,2025-12-30,88.1073989868164,87845357.49969482,True,True,True,True
+PG,PG,Procter & Gamble,Consumer Staples,Personal Care Products,cache,5534,2004-01-02,2025-12-30,141.96543884277344,1139740955.7907104,True,True,True,True
+PGR,PGR,Progressive Corporation,Financials,Property & Casualty Insurance,cache,5534,2004-01-02,2025-12-30,216.123779296875,660523454.1526793,True,True,True,True
+PH,PH,Parker Hannifin,Industrials,Industrial Machinery & Supplies & Components,cache,5534,2004-01-02,2025-12-30,887.1665649414062,425668346.0205078,True,True,True,True
+PHM,PHM,PulteGroup,Consumer Discretionary,Homebuilding,cache,5534,2004-01-02,2025-12-30,117.87859344482422,231796643.96247864,True,True,True,True
+PKG,PKG,Packaging Corporation of America,Materials,Paper & Plastic Packaging Products & Materials,cache,5534,2004-01-02,2025-12-30,207.04376220703125,135034489.25323486,True,True,True,True
+PLD,PLD,Prologis,Real Estate,Industrial REITs,cache,5534,2004-01-02,2025-12-30,127.98037719726562,368072569.33174133,True,True,True,True
+PLTR,PLTR,Palantir Technologies,Information Technology,Application Software,cache,1319,2020-09-30,2025-12-30,180.83999633789065,8887333709.620667,True,True,True,True
+PM,PM,Philip Morris International,Consumer Staples,Tobacco,cache,4477,2008-03-17,2025-12-30,160.51707458496094,875421775.793457,True,True,True,True
+PNC,PNC,PNC Financial Services,Financials,Diversified Banks,cache,5534,2004-01-02,2025-12-30,207.8555908203125,345654761.05270386,True,True,True,True
+PNR,PNR,Pentair,Industrials,Industrial Machinery & Supplies & Components,cache,5534,2004-01-02,2025-12-30,105.19485473632812,122901590.76919557,True,True,True,True
+PNW,PNW,Pinnacle West Capital,Utilities,Multi-Utilities,cache,5534,2004-01-02,2025-12-30,88.3918228149414,96559083.3518982,True,True,True,True
+PODD,PODD,Insulet Corporation,Health Care,Health Care Equipment,cache,4688,2007-05-15,2025-12-30,287.0299987792969,176881549.58190918,True,True,True,True
+POOL,POOL,Pool Corporation,Consumer Discretionary,Distributors,cache,5534,2004-01-02,2025-12-30,229.7003326416016,158703539.36157227,True,True,True,True
+PPG,PPG,PPG Industries,Materials,Specialty Chemicals,cache,5534,2004-01-02,2025-12-30,103.08753967285156,174073027.03399658,True,True,True,True
+PPL,PPL,PPL Corporation,Utilities,Electric Utilities,cache,5534,2004-01-02,2025-12-30,35.067169189453125,184198422.5194931,True,True,True,True
+PRU,PRU,Prudential Financial,Financials,Life & Health Insurance,cache,5534,2004-01-02,2025-12-30,112.16848754882812,157113054.77752683,True,True,True,True
+PSA,PSA,Public Storage,Real Estate,Self-Storage REITs,cache,5534,2004-01-02,2025-12-30,258.49871826171875,237378165.9210205,True,True,True,True
+PSKY,PSKY,Paramount Skydance Corporation,Communication Services,Movies & Entertainment,cache,5049,2005-12-05,2025-12-30,13.44050407409668,114068256.4690113,True,True,True,True
+PSX,PSX,Phillips 66,Energy,Oil & Gas Refining & Marketing,cache,3450,2012-04-12,2025-12-30,128.50355529785156,281750583.97369385,True,True,True,True
+PTC,PTC,PTC Inc.,Information Technology,Application Software,cache,5534,2004-01-02,2025-12-30,175.41000366210938,152474778.9505005,True,True,True,True
+PWR,PWR,Quanta Services,Industrials,Construction & Engineering,cache,5534,2004-01-02,2025-12-30,428.6140441894531,380910843.1274414,True,True,True,True
+PYPL,PYPL,PayPal,Financials,Transaction & Payment Processing Services,cache,2639,2015-07-06,2025-12-30,58.92160034179688,762450177.1583557,True,True,True,True
+QCOM,QCOM,Qualcomm,Information Technology,Semiconductors,cache,5534,2004-01-02,2025-12-30,172.5421905517578,1204418023.513794,True,True,True,True
+RCL,RCL,Royal Caribbean Group,Consumer Discretionary,"Hotels, Resorts & Cruise Lines",cache,5534,2004-01-02,2025-12-30,280.20721435546875,577327355.3070068,True,True,True,True
+REG,REG,Regency Centers,Real Estate,Retail REITs,cache,5534,2004-01-02,2025-12-30,68.92768859863281,72307795.16906738,True,True,True,True
+REGN,REGN,Regeneron Pharmaceuticals,Health Care,Biotechnology,cache,5534,2004-01-02,2025-12-30,773.0101318359375,573175986.4105225,True,True,True,True
+RF,RF,Regions Financial Corporation,Financials,Regional Banks,cache,5534,2004-01-02,2025-12-30,27.05985641479492,451613060.172081,True,True,True,True
+RJF,RJF,Raymond James Financial,Financials,Investment Banking & Brokerage,cache,5534,2004-01-02,2025-12-30,161.3992156982422,170135654.4128418,True,True,True,True
+RL,RL,Ralph Lauren Corporation,Consumer Discretionary,"Apparel, Accessories & Luxury Goods",cache,5534,2004-01-02,2025-12-30,357.67852783203125,175816001.13983154,True,True,True,True
+RMD,RMD,ResMed,Health Care,Health Care Equipment,cache,5534,2004-01-02,2025-12-30,242.5182342529297,253683231.7718506,True,True,True,True
+ROK,ROK,Rockwell Automation,Industrials,Electrical Components & Equipment,cache,5534,2004-01-02,2025-12-30,392.3176879882813,291002691.95861816,True,True,True,True
+ROL,ROL,"Rollins, Inc.",Industrials,Environmental & Facilities Services,cache,5534,2004-01-02,2025-12-30,60.24724197387695,97864502.44503021,True,True,True,True
+ROP,ROP,Roper Technologies,Information Technology,Electronic Equipment & Instruments,cache,5534,2004-01-02,2025-12-30,448.0177917480469,390851524.97406006,True,True,True,True
+ROST,ROST,Ross Stores,Consumer Discretionary,Apparel Retail,cache,5534,2004-01-02,2025-12-30,181.0652008056641,362229448.74801636,True,True,True,True
+RSG,RSG,Republic Services,Industrials,Environmental & Facilities Services,cache,5534,2004-01-02,2025-12-30,213.45054626464844,277131992.565155,True,True,True,True
+RTX,RTX,RTX Corporation,Industrials,Aerospace & Defense,cache,5534,2004-01-02,2025-12-30,183.4008331298828,661370554.3968201,True,True,True,True
+RVTY,RVTY,Revvity,Health Care,Health Care Equipment,cache,5534,2004-01-02,2025-12-30,97.29473876953124,107170387.32910156,True,True,True,True
+SATS,SATS,EchoStar,Communication Services,Wireless Telecommunication Services,cache,4528,2008-01-02,2025-12-30,109.1999969482422,188727726.59797668,True,True,True,True
+SBAC,SBAC,SBA Communications,Real Estate,Telecom Tower REITs,cache,5534,2004-01-02,2025-12-30,193.44212341308597,176955126.9180298,True,True,True,True
+SBUX,SBUX,Starbucks,Consumer Discretionary,Restaurants,cache,5534,2004-01-02,2025-12-30,84.70375061035156,761381284.7141266,True,True,True,True
+SCHW,SCHW,Charles Schwab Corporation,Financials,Investment Banking & Brokerage,cache,5534,2004-01-02,2025-12-30,100.21159362792967,790944788.4994507,True,True,True,True
+SHW,SHW,Sherwin-Williams,Materials,Specialty Chemicals,cache,5534,2004-01-02,2025-12-30,325.4403991699219,631317719.430542,True,True,True,True
+SJM,SJM,J.M. Smucker Company (The),Consumer Staples,Packaged Foods & Meats,cache,5534,2004-01-02,2025-12-30,97.44474792480467,175078646.41075134,True,True,True,True
+SLB,SLB,Schlumberger,Energy,Oil & Gas Equipment & Services,cache,5534,2004-01-02,2025-12-30,38.32400131225586,498827689.59293365,True,True,True,True
+SMCI,SMCI,Supermicro,Information Technology,"Technology Hardware, Storage & Peripherals",cache,4720,2007-03-29,2025-12-30,29.649999618530277,1222244147.600174,True,True,True,True
+SNA,SNA,Snap-on,Industrials,Industrial Machinery & Supplies & Components,cache,5534,2004-01-02,2025-12-30,347.4560546875,88828603.6026001,True,True,True,True
+SNPS,SNPS,Synopsys,Information Technology,Application Software,cache,5534,2004-01-02,2025-12-30,474.489990234375,871119156.0791016,True,True,True,True
+SO,SO,Southern Company,Utilities,Electric Utilities,cache,5534,2004-01-02,2025-12-30,86.88751220703125,457203158.2332611,True,True,True,True
+SOLV,SOLV,Solventum,Health Care,Health Care Technology,cache,443,2024-03-26,2025-12-30,80.16000366210938,68084452.21786499,True,True,True,True
+SPG,SPG,Simon Property Group,Real Estate,Retail REITs,cache,5534,2004-01-02,2025-12-30,184.69845581054688,239421593.53637695,True,True,True,True
+SPGI,SPGI,S&P Global,Financials,Financial Exchanges & Data,cache,5534,2004-01-02,2025-12-30,526.4662475585938,642856316.2628174,True,True,True,True
+SRE,SRE,Sempra,Utilities,Multi-Utilities,cache,5534,2004-01-02,2025-12-30,88.47319030761719,288919907.15789795,True,True,True,True
+STE,STE,Steris,Health Care,Health Care Equipment,cache,5534,2004-01-02,2025-12-30,254.8219451904297,135438683.41827393,True,True,True,True
+STLD,STLD,Steel Dynamics,Materials,Steel,cache,5534,2004-01-02,2025-12-30,170.0038604736328,168179920.81375122,True,True,True,True
+STT,STT,State Street Corporation,Financials,Asset Management & Custody Banks,cache,5534,2004-01-02,2025-12-30,128.6318817138672,199137481.46514893,True,True,True,True
+STX,STX,Seagate Technology,Information Technology,"Technology Hardware, Storage & Peripherals",cache,5534,2004-01-02,2025-12-30,279.5922546386719,755727427.3200989,True,True,True,True
+STZ,STZ,Constellation Brands,Consumer Staples,Distillers & Vintners,cache,5534,2004-01-02,2025-12-30,138.30104064941406,317622653.46221924,True,True,True,True
+SW,SW,Smurfit Westrock,Materials,Paper & Plastic Packaging Products & Materials,cache,4413,2008-06-17,2025-12-30,38.49951171875,169540675.51078796,True,True,True,True
+SWK,SWK,Stanley Black & Decker,Industrials,Industrial Machinery & Supplies & Components,cache,5534,2004-01-02,2025-12-30,74.3647232055664,124125827.57148743,True,True,True,True
+SWKS,SWKS,Skyworks Solutions,Information Technology,Semiconductors,cache,5534,2004-01-02,2025-12-30,63.69441604614258,165852992.41752625,True,True,True,True
+SYF,SYF,Synchrony Financial,Financials,Consumer Finance,cache,2872,2014-07-31,2025-12-30,83.96815490722656,228419437.21046448,True,True,True,True
+SYK,SYK,Stryker Corporation,Health Care,Health Care Equipment,cache,5534,2004-01-02,2025-12-30,352.2867736816406,512200532.4951172,True,True,True,True
+SYY,SYY,Sysco,Consumer Staples,Food Distributors,cache,5534,2004-01-02,2025-12-30,73.10513305664062,215073669.68078613,True,True,True,True
+T,T,AT&T,Communication Services,Integrated Telecommunication Services,cache,5534,2004-01-02,2025-12-30,24.26850128173828,908122156.22015,True,True,True,True
+TAP,TAP,Molson Coors Beverage Company,Consumer Staples,Brewers,cache,5534,2004-01-02,2025-12-30,46.323055267333984,114972704.20417786,True,True,True,True
+TDG,TDG,TransDigm Group,Industrials,Aerospace & Defense,cache,4981,2006-03-15,2025-12-30,1316.449951171875,353148400.02441406,True,True,True,True
+TDY,TDY,Teledyne Technologies,Information Technology,Electronic Equipment & Instruments,cache,5534,2004-01-02,2025-12-30,518.0,159624136.54785156,True,True,True,True
+TECH,TECH,Bio-Techne,Health Care,Life Sciences Tools & Services,cache,5534,2004-01-02,2025-12-30,59.040565490722656,106762616.23649597,True,True,True,True
+TEL,TEL,TE Connectivity,Information Technology,Electronic Manufacturing Services,cache,4667,2007-06-14,2025-12-30,229.6761779785156,358372115.9484863,True,True,True,True
+TER,TER,Teradyne,Information Technology,Semiconductor Materials & Equipment,cache,5534,2004-01-02,2025-12-30,196.5877990722656,439636231.13479614,True,True,True,True
+TFC,TFC,Truist Financial,Financials,Diversified Banks,cache,5534,2004-01-02,2025-12-30,49.065067291259766,332528745.11470795,True,True,True,True
+TGT,TGT,Target Corporation,Consumer Staples,Consumer Staples Merchandise Retail,cache,5534,2004-01-02,2025-12-30,96.4490737915039,603479618.8812256,True,True,True,True
+TJX,TJX,TJX Companies,Consumer Discretionary,Apparel Retail,cache,5534,2004-01-02,2025-12-30,154.9120330810547,633036115.8340454,True,True,True,True
+TKO,TKO,TKO Group Holdings,Communication Services,Movies & Entertainment,cache,5534,2004-01-02,2025-12-30,213.3114318847656,187412864.52026367,True,True,True,True
+TMO,TMO,Thermo Fisher Scientific,Health Care,Life Sciences Tools & Services,cache,5534,2004-01-02,2025-12-30,582.873779296875,997721805.0354004,True,True,True,True
+TMUS,TMUS,T-Mobile US,Communication Services,Wireless Telecommunication Services,cache,4706,2007-04-19,2025-12-30,202.8247528076172,933317909.4566345,True,True,True,True
+TPL,TPL,Texas Pacific Land Corporation,Energy,Oil & Gas Exploration & Production,cache,5534,2004-01-02,2025-12-30,292.3450622558594,121177429.71954346,True,True,True,True
+TPR,TPR,"Tapestry, Inc.",Consumer Discretionary,"Apparel, Accessories & Luxury Goods",cache,5534,2004-01-02,2025-12-30,129.18365478515625,346389367.46635437,True,True,True,True
+TRGP,TRGP,Targa Resources,Energy,Oil & Gas Storage & Transportation,cache,3789,2010-12-07,2025-12-30,184.71881103515625,236335792.3400879,True,True,True,True
+TRMB,TRMB,Trimble Inc.,Information Technology,Application Software,cache,5534,2004-01-02,2025-12-30,79.55999755859375,103403705.17311096,True,True,True,True
+TROW,TROW,T. Rowe Price,Financials,Asset Management & Custody Banks,cache,5534,2004-01-02,2025-12-30,102.11914825439452,143264636.25297546,True,True,True,True
+TRV,TRV,Travelers Companies (The),Financials,Property & Casualty Insurance,cache,5534,2004-01-02,2025-12-30,291.3192138671875,320175798.4413147,True,True,True,True
+TSCO,TSCO,Tractor Supply,Consumer Discretionary,Other Specialty Retail,cache,5534,2004-01-02,2025-12-30,50.135719299316406,263659994.0410614,True,True,True,True
+TSLA,TSLA,"Tesla, Inc.",Consumer Discretionary,Automobile Manufacturers,cache,3901,2010-06-29,2025-12-30,454.4299926757813,31262432722.561646,True,True,True,True
+TSN,TSN,Tyson Foods,Consumer Staples,Packaged Foods & Meats,cache,5534,2004-01-02,2025-12-30,58.70552062988281,140676691.3822174,True,True,True,True
+TT,TT,Trane Technologies,Industrials,Building Products,cache,5534,2004-01-02,2025-12-30,390.7674255371094,482883941.6015625,True,True,True,True
+TTD,TTD,Trade Desk (The),Communication Services,Advertising,cache,2332,2016-09-21,2025-12-30,38.119998931884766,565297455.8940887,True,True,True,True
+TTWO,TTWO,Take-Two Interactive,Communication Services,Interactive Home Entertainment,cache,5534,2004-01-02,2025-12-30,257.9100036621094,350941588.8519287,True,True,True,True
+TXN,TXN,Texas Instruments,Information Technology,Semiconductors,cache,5534,2004-01-02,2025-12-30,174.28240966796875,1192284985.1387024,True,True,True,True
+TXT,TXT,Textron,Industrials,Aerospace & Defense,cache,5534,2004-01-02,2025-12-30,88.32069396972656,105976995.96710205,True,True,True,True
+TYL,TYL,Tyler Technologies,Information Technology,Application Software,cache,5534,2004-01-02,2025-12-30,458.1300048828125,162313732.73010254,True,True,True,True
+UAL,UAL,United Airlines Holdings,Industrials,Passenger Airlines,cache,5007,2006-02-06,2025-12-30,111.5199966430664,528026177.1759033,True,True,True,True
+UBER,UBER,Uber,Industrials,Passenger Ground Transportation,cache,1670,2019-05-10,2025-12-30,82.12000274658203,1502156098.7113953,True,True,True,True
+UDR,UDR,"UDR, Inc.",Real Estate,Multi-Family Residential REITs,cache,5534,2004-01-02,2025-12-30,36.105201721191406,85999576.72843933,True,True,True,True
+UHS,UHS,Universal Health Services,Health Care,Health Care Facilities,cache,5534,2004-01-02,2025-12-30,224.8415985107422,135279510.21652222,True,True,True,True
+ULTA,ULTA,Ulta Beauty,Consumer Discretionary,Other Specialty Retail,cache,4574,2007-10-25,2025-12-30,606.8900146484375,296430896.9604492,True,True,True,True
+UNH,UNH,UnitedHealth Group,Health Care,Managed Health Care,cache,5534,2004-01-02,2025-12-30,329.5976257324219,2978602897.091675,True,True,True,True
+UNP,UNP,Union Pacific Corporation,Industrials,Rail Transportation,cache,5534,2004-01-02,2025-12-30,231.848388671875,768324713.4460449,True,True,True,True
+UPS,UPS,United Parcel Service,Industrials,Air Freight & Logistics,cache,5534,2004-01-02,2025-12-30,98.2695770263672,579179236.7259979,True,True,True,True
+URI,URI,United Rentals,Industrials,Trading Companies & Distributors,cache,5534,2004-01-02,2025-12-30,815.413330078125,469963203.024292,True,True,True,True
+USB,USB,U.S. Bancorp,Financials,Diversified Banks,cache,5534,2004-01-02,2025-12-30,53.24026107788086,405985532.02056885,True,True,True,True
+V,V,Visa Inc.,Financials,Transaction & Payment Processing Services,cache,4475,2008-03-19,2025-12-30,352.8923034667969,1929356509.613037,True,True,True,True
+VICI,VICI,Vici Properties,Real Estate,Hotel & Resort REITs,cache,2010,2018-01-02,2025-12-30,27.886157989501957,258619141.1717415,True,True,True,True
+VLO,VLO,Valero Energy,Energy,Oil & Gas Refining & Marketing,cache,5534,2004-01-02,2025-12-30,163.8578643798828,400750420.1461792,True,True,True,True
+VLTO,VLTO,Veralto,Industrials,Environmental & Facilities Services,cache,562,2023-10-04,2025-12-30,101.07699584960938,132396475.963974,True,True,True,True
+VMC,VMC,Vulcan Materials Company,Materials,Construction Materials,cache,5534,2004-01-02,2025-12-30,288.333740234375,234150954.51660156,True,True,True,True
+VRSK,VRSK,Verisk Analytics,Industrials,Research & Consulting Services,cache,4083,2009-10-07,2025-12-30,223.7935485839844,277909984.73968506,True,True,True,True
+VRSN,VRSN,Verisign,Information Technology,Internet Services & Infrastructure,cache,5534,2004-01-02,2025-12-30,245.0085601806641,188807136.3922119,True,True,True,True
+VRT,VRT,Vertiv,Industrials,Electrical Components & Equipment,cache,1863,2018-08-02,2025-12-30,164.30088806152344,1007014866.4482117,True,True,True,True
+VRTX,VRTX,Vertex Pharmaceuticals,Health Care,Biotechnology,cache,5534,2004-01-02,2025-12-30,453.739990234375,553862157.019043,True,True,True,True
+VST,VST,Vistra Corp.,Utilities,Electric Utilities,cache,2322,2016-10-05,2025-12-30,162.39846801757812,798864131.0287474,True,True,True,True
+VTR,VTR,Ventas,Real Estate,Health Care REITs,cache,5534,2004-01-02,2025-12-30,77.87071228027344,183532645.61080933,True,True,True,True
+VTRS,VTRS,Viatris,Health Care,Pharmaceuticals,cache,5534,2004-01-02,2025-12-30,12.433728218078612,76415468.70718002,True,True,True,True
+VZ,VZ,Verizon,Communication Services,Integrated Telecommunication Services,cache,5534,2004-01-02,2025-12-30,39.41310119628906,818469816.4699554,True,True,True,True
+WAB,WAB,Wabtec,Industrials,Construction Machinery & Heavy Transportation Equipment,cache,5534,2004-01-02,2025-12-30,216.42767333984372,180241032.23266602,True,True,True,True
+WAT,WAT,Waters Corporation,Health Care,Life Sciences Tools & Services,cache,5534,2004-01-02,2025-12-30,383.989990234375,202829538.2095337,True,True,True,True
+WBD,WBD,Warner Bros. Discovery,Communication Services,Broadcasting,cache,5153,2005-07-08,2025-12-30,28.940000534057617,774956778.2516003,True,True,True,True
+WDAY,WDAY,"Workday, Inc.",Information Technology,Application Software,cache,3322,2012-10-12,2025-12-30,216.92999267578125,554914286.0321045,True,True,True,True
+WDC,WDC,Western Digital,Information Technology,"Technology Hardware, Storage & Peripherals",cache,5534,2004-01-02,2025-12-30,175.97576904296875,873836371.1135864,True,True,True,True
+WEC,WEC,WEC Energy Group,Utilities,Electric Utilities,cache,5534,2004-01-02,2025-12-30,105.20335388183594,219238744.95773315,True,True,True,True
+WELL,WELL,Welltower,Real Estate,Health Care REITs,cache,5534,2004-01-02,2025-12-30,187.33531188964844,463234770.66192627,True,True,True,True
+WFC,WFC,Wells Fargo,Financials,Diversified Banks,cache,5534,2004-01-02,2025-12-30,93.84874725341795,1179588436.1312866,True,True,True,True
+WM,WM,Waste Management,Industrials,Environmental & Facilities Services,cache,5534,2004-01-02,2025-12-30,221.2403106689453,345487600.26550287,True,True,True,True
+WMB,WMB,Williams Companies,Energy,Oil & Gas Storage & Transportation,cache,5534,2004-01-02,2025-12-30,59.73040008544922,379544250.0576019,True,True,True,True
+WMT,WMT,Walmart,Consumer Staples,Consumer Staples Merchandise Retail,cache,5534,2004-01-02,2025-12-30,111.69078063964844,1506078731.8836212,True,True,True,True
+WRB,WRB,W. R. Berkley Corporation,Financials,Property & Casualty Insurance,cache,5534,2004-01-02,2025-12-30,70.71035766601562,147340595.80993652,True,True,True,True
+WSM,WSM,"Williams-Sonoma, Inc.",Consumer Discretionary,Homefurnishing Retail,cache,5534,2004-01-02,2025-12-30,180.1122283935547,211068188.36746216,True,True,True,True
+WST,WST,West Pharmaceutical Services,Health Care,Health Care Supplies,cache,5534,2004-01-02,2025-12-30,276.4084167480469,155046789.0258789,True,True,True,True
+WTW,WTW,Willis Towers Watson,Financials,Insurance Brokers,cache,5534,2004-01-02,2025-12-30,331.5577087402344,189955072.47924805,True,True,True,True
+WY,WY,Weyerhaeuser,Real Estate,Timber REITs,cache,5534,2004-01-02,2025-12-30,23.783950805664062,112926304.01687622,True,True,True,True
+WYNN,WYNN,Wynn Resorts,Consumer Discretionary,Casinos & Gaming,cache,5534,2004-01-02,2025-12-30,120.06812286376952,176862504.20341492,True,True,True,True
+XEL,XEL,Xcel Energy,Utilities,Multi-Utilities,cache,5534,2004-01-02,2025-12-30,73.6456527709961,300120958.23287964,True,True,True,True
+XOM,XOM,ExxonMobil,Energy,Integrated Oil & Gas,cache,5534,2004-01-02,2025-12-30,120.18889617919922,1603757782.5202942,True,True,True,True
+XYL,XYL,Xylem Inc.,Industrials,Industrial Machinery & Supplies & Components,cache,3574,2011-10-13,2025-12-30,137.12509155273438,155363959.65576172,True,True,True,True
+XYZ,XYZ,"Block, Inc.",Financials,Transaction & Payment Processing Services,cache,2542,2015-11-19,2025-12-30,65.54000091552734,458725956.29615784,True,True,True,True
+YUM,YUM,Yum! Brands,Consumer Discretionary,Restaurants,cache,5534,2004-01-02,2025-12-30,151.48184204101562,269629408.16574097,True,True,True,True
+ZBH,ZBH,Zimmer Biomet,Health Care,Health Care Equipment,cache,5534,2004-01-02,2025-12-30,90.54412078857422,149706038.9022827,True,True,True,True
+ZBRA,ZBRA,Zebra Technologies,Information Technology,Electronic Equipment & Instruments,cache,5534,2004-01-02,2025-12-30,246.7400054931641,147481787.7105713,True,True,True,True
+ZTS,ZTS,Zoetis,Health Care,Pharmaceuticals,cache,3248,2013-02-01,2025-12-30,125.32740020751952,472298985.68496704,True,True,True,True

@@ -1,0 +1,54 @@
+name: Daily Build
+
+on:
+  schedule:
+    - cron: '0 22 * * 1-5'   # 22:00 UTC = 18:00 ET, weekdays after market close
+  workflow_dispatch:           # manual trigger for testing
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: python -m pytest tests/ -q --tb=short
+
+      - name: Restore DB cache
+        uses: actions/cache@v4
+        with:
+          path: db/
+          key: dashboard-db-${{ github.run_number }}
+          restore-keys: |
+            dashboard-db-
+
+      - name: Build dashboard
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: python main.py
+
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: pages/
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4

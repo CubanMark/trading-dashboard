@@ -1,0 +1,14 @@
+db/dashboard.db
+pages/index.html
+__pycache__/
+*.pyc
+*.pyo
+.env
+.cache/
+*.egg-info/
+dist/
+.pytest_cache/
+.pka/
+.claude/
+Screenshots/
+mockup.webp
