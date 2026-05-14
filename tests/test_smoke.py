@@ -16,7 +16,7 @@ from data.universe import seed_from_csv
 from data.loader import load_price_dfs
 from compute.indicators import add_sma, add_atr, add_momentum, is_uptrend
 from scanners.pullback import scan, scan_universe
-from render.homepage import _get_sector_perf, _sector_section_html
+from render.homepage import _get_sector_perf, _sector_section_html, _get_industry_perf, _industry_section_html
 
 SEED_CSV = Path(__file__).parent.parent / "data" / "universe_seed.csv"
 
@@ -272,3 +272,76 @@ def test_sector_section_html_renders(mem_db):
 def test_sector_section_html_empty(mem_db):
     html = _sector_section_html([])
     assert html == ""
+
+
+# ---------------------------------------------------------------------------
+# Industry performance
+# ---------------------------------------------------------------------------
+
+def _seed_universe_with_industry(conn, ticker: str, industry: str) -> None:
+    conn.execute(
+        """INSERT OR IGNORE INTO universe (ticker, gics_sub_industry, active)
+           VALUES (?, ?, 1)""",
+        (ticker, industry),
+    )
+    conn.commit()
+
+
+def _seed_prices_for_ticker(conn, ticker: str, n: int = 30) -> None:
+    rng = np.random.default_rng(hash(ticker) % (2**31))
+    close = 50 * np.cumprod(1 + rng.normal(0.001, 0.01, n))
+    dates = pd.date_range("2026-04-01", periods=n, freq="B").strftime("%Y-%m-%d")
+    conn.executemany(
+        "INSERT OR IGNORE INTO prices (ticker, date, open, high, low, close, volume)"
+        " VALUES (?,?,?,?,?,?,?)",
+        [(ticker, d, float(v), float(v)*1.01, float(v)*0.99, float(v), 1_000_000)
+         for d, v in zip(dates, close)],
+    )
+    conn.commit()
+
+
+def test_get_industry_perf_empty_db(mem_db):
+    assert _get_industry_perf(mem_db) == []
+
+
+def test_get_industry_perf_returns_sorted(mem_db):
+    # Seed 3 industries with 3 stocks each
+    for i, ind in enumerate(["Semiconductors", "Biotechnology", "Banks"]):
+        for j in range(3):
+            ticker = f"{ind[:3].upper()}{j}"
+            _seed_universe_with_industry(mem_db, ticker, ind)
+            _seed_prices_for_ticker(mem_db, ticker)
+
+    result = _get_industry_perf(mem_db)
+    assert len(result) == 3
+    perfs = [r["perf_1m"] for r in result]
+    assert perfs == sorted(perfs, reverse=True)
+    assert all(r["n"] >= 3 for r in result)
+
+
+def test_get_industry_perf_filters_small_groups(mem_db):
+    # Industry with only 2 stocks should be excluded (min = 3)
+    for j in range(2):
+        ticker = f"TINY{j}"
+        _seed_universe_with_industry(mem_db, ticker, "TinyIndustry")
+        _seed_prices_for_ticker(mem_db, ticker)
+
+    result = _get_industry_perf(mem_db)
+    assert all(r["industry"] != "TinyIndustry" for r in result)
+
+
+def test_industry_section_html_renders(mem_db):
+    for i, ind in enumerate(["Semiconductors", "Biotechnology", "Banks"]):
+        for j in range(3):
+            ticker = f"{ind[:3].upper()}{j}"
+            _seed_universe_with_industry(mem_db, ticker, ind)
+            _seed_prices_for_ticker(mem_db, ticker)
+
+    industries = _get_industry_perf(mem_db)
+    html = _industry_section_html(industries)
+    assert "INDUSTRY PERFORMANCE" in html
+    assert "Top" in html and "Bottom" in html
+
+
+def test_industry_section_html_empty(mem_db):
+    assert _industry_section_html([]) == ""

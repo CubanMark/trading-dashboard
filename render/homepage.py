@@ -27,6 +27,9 @@ _STRIP_CONFIG = [
 _BREADTH_GREEN = 60
 _BREADTH_RED   = 40
 
+_INDUSTRY_MIN_TICKERS = 3   # minimum stocks per sub-industry for a meaningful median
+_INDUSTRY_TOP_N       = 10
+
 _SECTOR_NAMES: dict[str, str] = {
     "XLK":  "Technology",
     "XLV":  "Health Care",
@@ -58,11 +61,12 @@ _RGB = {
 
 def build(conn: sqlite3.Connection, build_date: str) -> None:
     """Generate pages/index.html. Called from main.py Step 5."""
-    macro    = _get_macro_strip(conn)
-    breadth  = _get_breadth(conn)
-    sectors  = _get_sector_perf(conn)
-    hits     = _get_scanner_hits(conn)
-    html     = _render(macro, breadth, sectors, hits, build_date)
+    macro       = _get_macro_strip(conn)
+    breadth     = _get_breadth(conn)
+    sectors     = _get_sector_perf(conn)
+    industries  = _get_industry_perf(conn)
+    hits        = _get_scanner_hits(conn)
+    html        = _render(macro, breadth, sectors, industries, hits, build_date)
     PAGES_DIR.mkdir(parents=True, exist_ok=True)
     (PAGES_DIR / "index.html").write_text(html, encoding="utf-8")
 
@@ -136,6 +140,51 @@ def _get_sector_perf(conn: sqlite3.Connection) -> list[dict]:
     return result
 
 
+def _get_industry_perf(conn: sqlite3.Connection) -> list[dict]:
+    """
+    Compute median 1M return per GICS sub-industry from individual stock prices.
+    Equal-weighted median across all active universe stocks per sub-industry.
+    Returns list sorted by 1M performance descending.
+    """
+    df = pd.read_sql(
+        """
+        SELECT industry, rn, close FROM (
+            SELECT u.gics_sub_industry AS industry,
+                   p.close,
+                   ROW_NUMBER() OVER (PARTITION BY p.ticker ORDER BY p.date DESC) AS rn
+            FROM prices p
+            JOIN universe u ON u.ticker = p.ticker
+            WHERE u.active = 1
+              AND u.gics_sub_industry IS NOT NULL
+              AND u.gics_sub_industry != ''
+        )
+        WHERE rn IN (1, 22)
+        """,
+        conn,
+    )
+    if df.empty:
+        return []
+
+    latest = df[df["rn"] == 1].set_index("industry")["close"].rename("latest")
+    past   = df[df["rn"] == 22].set_index("industry")["close"].rename("past")
+
+    # Multiple stocks per industry — keep as series with duplicated index
+    merged = pd.DataFrame({"latest": latest, "past": past}).dropna()
+    merged = merged[merged["past"] > 0]
+    merged["perf_1m"] = (merged["latest"] / merged["past"] - 1) * 100
+
+    result = (
+        merged.groupby(level=0)["perf_1m"]
+        .agg(perf_1m="median", n="count")
+        .reset_index()
+        .rename(columns={"index": "industry"})
+    )
+    result = result[result["n"] >= _INDUSTRY_MIN_TICKERS].copy()
+    result["perf_1m"] = result["perf_1m"].round(2)
+    result = result.sort_values("perf_1m", ascending=False).reset_index(drop=True)
+    return result[["industry", "perf_1m", "n"]].to_dict("records")
+
+
 def _get_scanner_hits(conn: sqlite3.Connection) -> list[dict]:
     df = pd.read_sql(
         """SELECT ticker, gics_sector, rs_rank, perf_1m, dist_52w_high, date
@@ -172,14 +221,16 @@ def _render(
     macro: list[dict],
     breadth: Optional[dict],
     sectors: list[dict],
+    industries: list[dict],
     hits: list[dict],
     build_date: str,
 ) -> str:
-    strip         = _index_strip_html(macro)
-    b_tile        = _breadth_tile_html(breadth)
-    sector_sect   = _sector_section_html(sectors)
-    scanner_sect  = _scanner_section_html(hits, build_date)
-    ph            = _placeholder_tile
+    strip           = _index_strip_html(macro)
+    b_tile          = _breadth_tile_html(breadth)
+    sector_sect     = _sector_section_html(sectors)
+    industry_sect   = _industry_section_html(industries)
+    scanner_sect    = _scanner_section_html(hits, build_date)
+    ph              = _placeholder_tile
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -232,6 +283,25 @@ nav a.active{{color:#f1f5f9;font-weight:600}}
 .sector-tile{{background:white;border:1px solid #e2e8f0;border-radius:12px;padding:16px 20px}}
 .sector-header{{font-size:11px;font-weight:700;letter-spacing:1px;
                 text-transform:uppercase;color:#64748b;margin-bottom:12px}}
+.industry-section{{padding:0 20px 20px}}
+.industry-tile{{background:white;border:1px solid #e2e8f0;border-radius:12px;padding:16px 20px}}
+.industry-header{{font-size:11px;font-weight:700;letter-spacing:1px;
+                  text-transform:uppercase;color:#64748b;margin-bottom:14px;
+                  display:flex;align-items:center;gap:8px}}
+.industry-header-count{{font-weight:400;color:#94a3b8;letter-spacing:0}}
+.industry-grid{{display:grid;grid-template-columns:1fr 1fr;gap:24px}}
+.industry-sub-header{{font-size:11px;font-weight:700;letter-spacing:.5px;
+                       text-transform:uppercase;margin-bottom:8px}}
+.industry-sub-header.top{{color:#16a34a}}.industry-sub-header.bottom{{color:#dc2626}}
+.industry-row{{display:flex;align-items:center;padding:5px 0;
+               border-bottom:1px solid #f1f5f9;gap:6px}}
+.industry-row:last-child{{border-bottom:none}}
+.industry-name{{flex:1;font-size:13px;color:#1e293b;
+                white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+                min-width:0}}
+.industry-n{{font-size:11px;color:#94a3b8;white-space:nowrap;flex-shrink:0}}
+.industry-perf{{font-size:13px;font-weight:600;white-space:nowrap;
+                flex-shrink:0;min-width:48px;text-align:right}}
 .scanner-section{{padding:0 20px 20px}}
 .scanner-header{{font-size:11px;font-weight:700;letter-spacing:1px;
                  text-transform:uppercase;color:#64748b;margin-bottom:10px;
@@ -283,6 +353,8 @@ footer{{text-align:center;padding:16px 20px;color:#94a3b8;
 </div>
 
 {sector_sect}
+
+{industry_sect}
 
 {scanner_sect}
 
@@ -439,6 +511,49 @@ def _sector_section_html(sectors: list[dict]) -> str:
   <div class="sector-tile">
     <div class="sector-header">SECTOR PERFORMANCE</div>
     {_sector_heatmap_html(sectors)}
+  </div>
+</div>"""
+
+
+def _industry_section_html(industries: list[dict]) -> str:
+    if not industries:
+        return ""
+
+    top    = industries[:_INDUSTRY_TOP_N]
+    bottom = list(reversed(industries[-_INDUSTRY_TOP_N:]))
+    total  = len(industries)
+
+    def rows_html(items: list[dict], color_cls: str) -> str:
+        html = ""
+        for item in items:
+            perf = item["perf_1m"]
+            sign = "+" if perf >= 0 else ""
+            cls  = "green" if perf >= 0 else "red"
+            html += (
+                f'<div class="industry-row">'
+                f'<span class="industry-name" title="{item["industry"]}">{item["industry"]}</span>'
+                f'<span class="industry-n">{int(item["n"])} stocks</span>'
+                f'<span class="industry-perf {cls}">{sign}{perf:.1f}%</span>'
+                f'</div>'
+            )
+        return html
+
+    return f"""<div class="industry-section">
+  <div class="industry-tile">
+    <div class="industry-header">
+      INDUSTRY PERFORMANCE — 1M MEDIAN
+      <span class="industry-header-count">({total} industries)</span>
+    </div>
+    <div class="industry-grid">
+      <div>
+        <div class="industry-sub-header top">Top {len(top)}</div>
+        {rows_html(top, "green")}
+      </div>
+      <div>
+        <div class="industry-sub-header bottom">Bottom {len(bottom)}</div>
+        {rows_html(bottom, "red")}
+      </div>
+    </div>
   </div>
 </div>"""
 
