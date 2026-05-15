@@ -9,7 +9,7 @@ from compute.indicators import add_sma, add_atr, add_adr, add_momentum, is_uptre
 # ---------------------------------------------------------------------------
 
 _MA = 20
-_ATR_MULT_MA20 = 1.0   # close within 1.0 × ATR14 of SMA20
+_ATR_MULT_MA20 = 0.75  # close within 0.75 × ATR14 of SMA20
 _ATR_MULT_MA10 = 0.75  # close within 0.75 × ATR14 of SMA10
 _MIN_PRICE     = 5.0
 _MIN_AVG_VOL   = 500_000  # shares
@@ -190,22 +190,40 @@ def build_hit_row(ticker: str, df: pd.DataFrame, date: str, meta: dict) -> dict:
     row = df.loc[date]
     high_52w = df["high"].rolling(252).max().loc[date]
     avg_vol   = df["volume"].rolling(20).mean().loc[date]
+
+    atr = float(row["atr"]) if pd.notna(row.get("atr")) and float(row.get("atr", 0)) > 0 else None
+    scanner_id = meta.get("scanner", "pullback_ma20")
+
+    dist_ma_atr = None
+    dist_local_high_atr = None
+    if atr:
+        ma_col = "sma10" if scanner_id == "pullback_ma10" else "sma20"
+        sma_val = row.get(ma_col)
+        if pd.notna(sma_val):
+            dist_ma_atr = round((float(row["close"]) - float(sma_val)) / atr, 2)
+
+        idx = df.index.get_loc(date)
+        local_high = df["close"].iloc[max(0, idx - 19):idx + 1].max()
+        dist_local_high_atr = round((float(row["close"]) - float(local_high)) / atr, 2)
+
     return {
-        "date":          date,
-        "ticker":        ticker,
-        "scanner":       meta.get("scanner", "pullback_ma20"),
-        "scanner_label": meta.get("scanner_label", "MA20 Pullback"),
-        "gics_sector":   meta.get("gics_sector"),
-        "gics_industry": meta.get("gics_industry"),
-        "rs_rank":       meta.get("rs_rank"),
-        "perf_1m":       row.get("mom21d"),
-        "adr_pct":       row.get("adr_pct"),
-        "atr":           row.get("atr"),
-        "avg_volume":    float(avg_vol) if pd.notna(avg_vol) else None,
-        "dist_52w_high": (row["close"] / high_52w - 1) * 100 if pd.notna(high_52w) and high_52w else None,
-        "earnings_date": meta.get("earnings_date"),
-        "also_in":       "",  # populated by _annotate_overlaps()
-        "warning":       meta.get("warning", _WARNING),
+        "date":               date,
+        "ticker":             ticker,
+        "scanner":            scanner_id,
+        "scanner_label":      meta.get("scanner_label", "MA20 Pullback"),
+        "gics_sector":        meta.get("gics_sector"),
+        "gics_industry":      meta.get("gics_industry"),
+        "rs_rank":            meta.get("rs_rank"),
+        "perf_1m":            row.get("mom21d"),
+        "adr_pct":            row.get("adr_pct"),
+        "atr":                row.get("atr"),
+        "avg_volume":         float(avg_vol) if pd.notna(avg_vol) else None,
+        "dist_52w_high":      (row["close"] / high_52w - 1) * 100 if pd.notna(high_52w) and high_52w else None,
+        "earnings_date":      meta.get("earnings_date"),
+        "also_in":            "",  # populated by _annotate_overlaps()
+        "warning":            meta.get("warning", _WARNING),
+        "dist_ma_atr":        dist_ma_atr,
+        "dist_local_high_atr": dist_local_high_atr,
     }
 
 

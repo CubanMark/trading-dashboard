@@ -244,6 +244,7 @@ def _get_scanner_hits(conn: sqlite3.Connection) -> list[dict]:
                   sh.gics_sector,
                   u.gics_sub_industry,
                   sh.rs_rank, sh.perf_1m, sh.dist_52w_high,
+                  sh.dist_ma_atr, sh.dist_local_high_atr,
                   COALESCE(sh.also_in, '') AS also_in,
                   sh.date
            FROM scanner_hits sh
@@ -864,17 +865,30 @@ def _scanner_section_html(hits: list[dict], build_date: str) -> str:
             ticker      = h.get("ticker", "—")
             sector      = _str(h.get("gics_sector"))   or "—"
             industry    = _str(h.get("gics_sub_industry")) or "—"
-            rs          = h.get("rs_rank")
-            perf        = h.get("perf_1m")
-            dist        = h.get("dist_52w_high")
-            also_in     = h.get("also_in") or "—"
+            rs              = h.get("rs_rank")
+            perf            = h.get("perf_1m")
+            dist            = h.get("dist_52w_high")
+            dist_ma         = h.get("dist_ma_atr")
+            dist_local      = h.get("dist_local_high_atr")
+            also_in         = h.get("also_in") or "—"
 
-            rs_s    = f"{rs:.0f}" if rs is not None else "—"
-            dist_s  = f"{dist:.1f}%" if dist is not None else "—"
-            perf_s  = (f'<span class="{"green" if perf >= 0 else "red"}">'
-                       f'{"+" if perf >= 0 else ""}{perf:.1f}%</span>'
-                       if perf is not None else "—")
-            rs_num  = f"{rs:.0f}" if rs is not None else "0"
+            rs_s        = f"{rs:.0f}" if rs is not None else "—"
+            dist_s      = f"{dist:.1f}%" if dist is not None else "—"
+            perf_s      = (f'<span class="{"green" if perf >= 0 else "red"}">'
+                           f'{"+" if perf >= 0 else ""}{perf:.1f}%</span>'
+                           if perf is not None else "—")
+            rs_num      = f"{rs:.0f}" if rs is not None else "0"
+
+            def _atr_s(v) -> tuple[str, str]:
+                """Returns (display_str, sort_value_str) for an ATR distance."""
+                if v is None:
+                    return "—", "0"
+                sign = "+" if v > 0 else ""
+                return f"{sign}{v:.2f}", f"{v:.4f}"
+
+            dist_ma_s,    dist_ma_sort    = _atr_s(dist_ma)
+            dist_local_s, dist_local_sort = _atr_s(dist_local)
+
             rows += (
                 f'<tr data-setup="{scanner_id}" data-sector="{sector}" data-industry="{industry}">'
                 f'<td><span class="tag {tag_cls}">{tag_label}</span></td>'
@@ -883,6 +897,8 @@ def _scanner_section_html(hits: list[dict], build_date: str) -> str:
                 f'<td style="font-size:12px;color:#475569">{industry}</td>'
                 f'<td data-sort-value="{rs_num}">{rs_s}</td>'
                 f'<td>{perf_s}</td>'
+                f'<td data-sort-value="{dist_ma_sort}" style="font-size:12px">{dist_ma_s}</td>'
+                f'<td data-sort-value="{dist_local_sort}" style="font-size:12px">{dist_local_s}</td>'
                 f'<td>{dist_s}</td>'
                 f'<td style="font-size:11px;color:#94a3b8">{also_in}</td>'
                 f'</tr>\n'
@@ -911,8 +927,10 @@ def _scanner_section_html(hits: list[dict], build_date: str) -> str:
     <th class="sortable" data-col="3">Industry</th>
     <th class="sortable" data-col="4">RS Rank</th>
     <th class="sortable" data-col="5">1M Perf</th>
-    <th class="sortable" data-col="6">Dist 52W High</th>
-    <th class="sortable" data-col="7">Also In</th>
+    <th class="sortable" data-col="6" title="Signed distance from close to MA (ATR units). + = above MA, − = below.">Dist MA (ATR)</th>
+    <th class="sortable" data-col="7" title="Distance from close to 20-day high (ATR units). 0 = at high, negative = pulled back.">Pullback (ATR)</th>
+    <th class="sortable" data-col="8">Dist 52W High</th>
+    <th class="sortable" data-col="9">Also In</th>
   </tr></thead>
   <tbody>
 {rows}  </tbody>

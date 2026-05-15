@@ -195,10 +195,10 @@ def main() -> None:
                     """INSERT OR REPLACE INTO scanner_hits
                        (date, ticker, scanner, gics_sector, gics_industry, rs_rank,
                         perf_1m, adr_pct, atr, avg_volume, dist_52w_high, earnings_date,
-                        scanner_label, also_in, warning)
+                        scanner_label, also_in, warning, dist_ma_atr, dist_local_high_atr)
                        VALUES (:date, :ticker, :scanner, :gics_sector, :gics_industry, :rs_rank,
                                :perf_1m, :adr_pct, :atr, :avg_volume, :dist_52w_high, :earnings_date,
-                               :scanner_label, :also_in, :warning)""",
+                               :scanner_label, :also_in, :warning, :dist_ma_atr, :dist_local_high_atr)""",
                     hit_rows,
                 )
                 conn.commit()
