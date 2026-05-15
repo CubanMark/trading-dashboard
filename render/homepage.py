@@ -881,7 +881,7 @@ def _scanner_section_html(hits: list[dict], build_date: str) -> str:
 
             def _atr_s(v) -> tuple[str, str]:
                 """Returns (display_str, sort_value_str) for an ATR distance."""
-                if v is None:
+                if v is None or v != v:  # v != v catches float('nan')
                     return "—", "0"
                 sign = "+" if v > 0 else ""
                 return f"{sign}{v:.2f}", f"{v:.4f}"
