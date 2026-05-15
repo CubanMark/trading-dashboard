@@ -162,6 +162,12 @@ def main() -> None:
             price_dfs, today, spy_close=spy_close, meta_map=meta_map
         )
 
+        # Clear all previous hits so only today's results remain in the table.
+        deleted = conn.execute("DELETE FROM scanner_hits").rowcount
+        conn.commit()
+        if deleted:
+            logger.info("Cleared %d stale scanner hits", deleted)
+
         hit_rows: list[dict] = []
         if scan_result["regime"] == "bear":
             logger.info("Pullback scanner suspended — bear regime (SPY < SMA200)")
