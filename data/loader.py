@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 BULK_YEARS   = 5
 BATCH_SIZE   = 100
 BATCH_DELAY  = 2.0   # seconds between batches (yfinance rate limit courtesy)
-STALE_DAYS   = 3     # re-fetch if last stored date is older than this
+STALE_DAYS   = 1     # re-fetch if last stored date is older than yesterday
 
 
 # ---------------------------------------------------------------------------
