@@ -504,11 +504,46 @@ def test_compute_volatility_green_below_20(mem_db):
     assert result["value"] == 15.0
 
 
-def test_compute_sentiment_always_na(mem_db):
+def test_compute_sentiment_na_without_data(mem_db):
     from compute.dimensions import compute_sentiment
     result = compute_sentiment(mem_db)
     assert result["status"] == "na"
     assert result["metric_id"] == "sentiment"
+
+
+def test_compute_sentiment_yellow_in_normal_range(mem_db):
+    from compute.dimensions import compute_sentiment
+    mem_db.execute(
+        "INSERT OR IGNORE INTO macro_series (series_id, date, value) VALUES ('CNN_FNG', '2026-05-15', 55.0)"
+    )
+    mem_db.commit()
+    result = compute_sentiment(mem_db)
+    assert result["metric_id"] == "sentiment"
+    assert result["status"] == "yellow"
+    assert result["value"] == 55.0
+    assert "F&G 55" in result["label"]
+
+
+def test_compute_sentiment_red_on_extreme_fear(mem_db):
+    from compute.dimensions import compute_sentiment
+    mem_db.execute(
+        "INSERT OR IGNORE INTO macro_series (series_id, date, value) VALUES ('CNN_FNG', '2026-05-15', 18.0)"
+    )
+    mem_db.commit()
+    result = compute_sentiment(mem_db)
+    assert result["status"] == "red"
+    assert "Extreme Fear" in result["label"]
+
+
+def test_compute_sentiment_red_on_extreme_greed(mem_db):
+    from compute.dimensions import compute_sentiment
+    mem_db.execute(
+        "INSERT OR IGNORE INTO macro_series (series_id, date, value) VALUES ('CNN_FNG', '2026-05-15', 82.0)"
+    )
+    mem_db.commit()
+    result = compute_sentiment(mem_db)
+    assert result["status"] == "red"
+    assert "Extreme Greed" in result["label"]
 
 
 def test_compute_credit_na_without_fred(mem_db):

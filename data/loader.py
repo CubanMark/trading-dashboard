@@ -129,8 +129,43 @@ def run_update(conn: sqlite3.Connection) -> None:
                 f"{mock_ct} mock-fallback rows in prices")
 
 
+def _fetch_cnn_fear_greed() -> list[tuple[str, float]]:
+    """
+    Fetch CNN Fear & Greed scores from graphdata endpoint.
+
+    Returns list of (date_str, score) tuples covering ~252 trading days of history.
+    The endpoint always returns a rolling 1-year window, so INSERT OR IGNORE on
+    repeated calls is safe — existing rows are silently skipped.
+    Returns empty list on any failure.
+    """
+    import requests
+    from datetime import datetime, timezone
+    try:
+        resp = requests.get(
+            "https://production.dataviz.cnn.io/index/fearandgreed/graphdata",
+            headers={"User-Agent": "Mozilla/5.0 (compatible; trading-dashboard/1.0)"},
+            timeout=10,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+
+        rows: list[tuple[str, float]] = []
+        for pt in data.get("fear_and_greed_historical", {}).get("data", []):
+            ts_ms = pt.get("x")
+            score = pt.get("y")
+            if ts_ms is None or score is None:
+                continue
+            dt = datetime.fromtimestamp(ts_ms / 1000, tz=timezone.utc)
+            rows.append((dt.strftime("%Y-%m-%d"), float(score)))
+
+        return rows
+    except Exception as exc:
+        logger.warning("CNN Fear & Greed fetch failed: %s", exc)
+        return []
+
+
 def fetch_macro(conn: sqlite3.Connection, start: str) -> None:
-    """Fetch macro + sector ETFs via yfinance, and FRED series."""
+    """Fetch macro + sector ETFs via yfinance, FRED series, and CNN Fear & Greed."""
     yf_tickers = uni.MACRO_TICKERS + uni.SECTOR_ETFS
     logger.info("Fetching %d macro/sector tickers (yfinance)", len(yf_tickers))
 
@@ -185,6 +220,21 @@ def fetch_macro(conn: sqlite3.Connection, start: str) -> None:
             logger.info("Stored %d FRED rows", len(fred_rows))
     except Exception as exc:
         logger.warning("FRED fetch skipped: %s", exc)
+
+    # CNN Fear & Greed (optional — silent skip on failure)
+    # Returns ~252 days of history on every call; INSERT OR IGNORE is idempotent.
+    fng_rows = _fetch_cnn_fear_greed()
+    if fng_rows:
+        conn.executemany(
+            "INSERT OR IGNORE INTO macro_series (series_id, date, value) VALUES (?, ?, ?)",
+            [("CNN_FNG", d, v) for d, v in fng_rows],
+        )
+        conn.commit()
+        latest_date, latest_score = max(fng_rows, key=lambda r: r[0])
+        logger.info(
+            "CNN Fear & Greed: %d rows stored (latest %s → %.1f)",
+            len(fng_rows), latest_date, latest_score,
+        )
 
 
 # ---------------------------------------------------------------------------

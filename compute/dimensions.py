@@ -237,11 +237,58 @@ def compute_obos(conn: sqlite3.Connection) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# Dimension 5 — Sentiment (Phase 1: N/A)
+# Dimension 5 — Sentiment (CNN Fear & Greed, stored daily in macro_series)
 # ---------------------------------------------------------------------------
 
 def compute_sentiment(conn: sqlite3.Connection) -> dict:
-    return _na("sentiment", "Fear & Greed", "Data source not configured (Phase 2)")
+    row = conn.execute(
+        "SELECT value, date FROM macro_series WHERE series_id='CNN_FNG'"
+        " ORDER BY date DESC LIMIT 1"
+    ).fetchone()
+
+    if row is None:
+        return _na("sentiment", "Fear & Greed", "CNN F&G not yet fetched — runs with daily build")
+
+    score  = float(row[0])
+    date_s = row[1]
+
+    if score < 25:
+        status, rating = "red",    "Extreme Fear"
+        note = f"Contrarian: extreme fear often marks bottoms · {date_s}"
+    elif score > 75:
+        status, rating = "red",    "Extreme Greed"
+        note = f"Contrarian: extreme greed often marks tops · {date_s}"
+    elif score < 45:
+        status, rating = "yellow", "Fear"
+        note = f"Below neutral · {date_s}"
+    elif score > 55:
+        status, rating = "yellow", "Greed"
+        note = f"Above neutral · {date_s}"
+    else:
+        status, rating = "yellow", "Neutral"
+        note = f"Neutral zone · {date_s}"
+
+    rows_1w = conn.execute(
+        "SELECT value FROM macro_series WHERE series_id='CNN_FNG'"
+        " ORDER BY date DESC LIMIT 6"
+    ).fetchall()
+    change_1w = None
+    trend = "flat"
+    if len(rows_1w) >= 6:
+        prior     = float(rows_1w[-1][0])
+        change_1w = round(score - prior, 1)
+        trend = "up" if change_1w > 2 else "down" if change_1w < -2 else "flat"
+
+    return {
+        "metric_id":   "sentiment",
+        "value":       round(score, 1),
+        "label":       f"F&G {score:.0f} · {rating}",
+        "status":      status,
+        "trend":       trend,
+        "note":        note,
+        "prior_value": None,
+        "change_1w":   change_1w,
+    }
 
 
 # ---------------------------------------------------------------------------
