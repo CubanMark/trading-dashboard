@@ -177,7 +177,7 @@ Pro Fundstück entscheiden: **übernehmen** (kopieren/anpassen) oder **bewusst n
 
 ## 10. Offene Entscheidungen
 
-- [~] Pullback-Scanner: **vorläufig** MA20, Tiefe ±3%, Trend-Vorfilter Close > SMA50 > SMA200 (aus Swing Lab übernommen, 2026-05-14). Nicht final – Swing Lab noch nicht weit genug für belastbare Aussage. Volumen-Filter noch offen.
+- [~] Pullback-Scanner: MA20 Tiefe **1.0 × ATR14**, MA10 Tiefe **0.75 × ATR14** (2026-05-15, ersetzt %-Regel — ATR normiert Volatilität über Aktien hinweg). Multiplier sind Startwerte, nach Wochen Live-Betrieb anpassen. Volumen-Filter beim Pullback selbst noch offen.
 - [x] yfinance: **unadjusted speichern + Splits/Dividenden separat** (2026-05-14). Grund: yfinance-Adjustments haben bekannte rückwirkende Bugs; eigene Adjustment-Hoheit schützt die Breadth-Historie.
 - [ ] Sektor-Heatmap: Zeitraum-Toggle (1W/1M/3M/6M) gleich oder Phase 2?
 - [ ] Composite-Strip: alle Pills klickbar zum Drilldown machen

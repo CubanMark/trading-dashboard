@@ -9,10 +9,10 @@ from compute.indicators import add_sma, add_atr, add_adr, add_momentum, is_uptre
 # ---------------------------------------------------------------------------
 
 _MA = 20
-_DEPTH_PCT    = 0.03   # close within ±3% of SMA20 (MA20 variant)
-_DEPTH_MA10   = 0.02   # close within ±2% of SMA10 (MA10 variant)
-_MIN_PRICE    = 5.0
-_MIN_AVG_VOL  = 500_000  # shares
+_ATR_MULT_MA20 = 1.0   # close within 1.0 × ATR14 of SMA20
+_ATR_MULT_MA10 = 0.75  # close within 0.75 × ATR14 of SMA10
+_MIN_PRICE     = 5.0
+_MIN_AVG_VOL   = 500_000  # shares
 
 _EXCLUDED_SUB_INDUSTRIES = frozenset({
     # Biotech / Pharma: binary FDA/trial risk
@@ -57,12 +57,13 @@ def _spy_uptrend(spy_close: pd.Series) -> bool:
 # ---------------------------------------------------------------------------
 
 def scan_ma20(df: pd.DataFrame, date: str) -> bool:
-    """Pullback to MA20: close within ±3% of SMA20, in uptrend, price/vol filters."""
+    """Pullback to MA20: close within 1.0 × ATR14 of SMA20, in uptrend, price/vol filters."""
     if date not in df.index:
         return False
     df = _prepare(df)
     row = df.loc[date]
-    if pd.isna(row.get(f"sma{_MA}")) or pd.isna(row.get("atr")):
+    atr = row.get("atr")
+    if pd.isna(row.get(f"sma{_MA}")) or pd.isna(atr) or float(atr) <= 0:
         return False
     if not row.get("uptrend", False):
         return False
@@ -71,16 +72,19 @@ def scan_ma20(df: pd.DataFrame, date: str) -> bool:
     if df["volume"].rolling(20).mean().loc[date] < _MIN_AVG_VOL:
         return False
     sma = row[f"sma{_MA}"]
-    return abs(row["close"] - sma) / sma <= _DEPTH_PCT
+    return abs(row["close"] - sma) <= _ATR_MULT_MA20 * float(atr)
 
 
 def scan_ma10(df: pd.DataFrame, date: str) -> bool:
-    """Pullback to MA10: close within ±2% of SMA10, uptrend, recently pulled back."""
+    """Pullback to MA10: close within 0.75 × ATR14 of SMA10, uptrend, recently pulled back."""
     if date not in df.index:
         return False
     df = _prepare(df)
     row = df.loc[date]
+    atr = row.get("atr")
     if pd.isna(row.get("sma10")) or pd.isna(row.get("sma50")) or pd.isna(row.get("sma200")):
+        return False
+    if pd.isna(atr) or float(atr) <= 0:
         return False
     if not (row["close"] > row["sma50"] > row["sma200"]):
         return False
@@ -89,7 +93,7 @@ def scan_ma10(df: pd.DataFrame, date: str) -> bool:
     if df["volume"].rolling(20).mean().loc[date] < _MIN_AVG_VOL:
         return False
     sma10 = row["sma10"]
-    if abs(row["close"] - sma10) / sma10 > _DEPTH_MA10:
+    if abs(row["close"] - sma10) > _ATR_MULT_MA10 * float(atr):
         return False
     # Not at a new 10-day high — must have pulled back at least a little
     idx = df.index.get_loc(date)
