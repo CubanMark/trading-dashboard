@@ -325,7 +325,8 @@ def _render(
     bspark         = _breadth_sparkline_section_html(breadth)
     sector_sect    = _sector_section_html(sectors)
     industry_sect  = _industry_section_html(industries)
-    scanner_sect   = _scanner_section_html(hits, build_date)
+    ind_rank_map   = {item["industry"]: i + 1 for i, item in enumerate(industries)}
+    scanner_sect   = _scanner_section_html(hits, build_date, ind_rank_map)
     source_notice  = _source_notice_html(op_summary)
     op_line        = _operation_summary_line_html(op_summary)
 
@@ -810,7 +811,7 @@ def _is_bear_regime(conn: sqlite3.Connection) -> bool:
     return float(close.iloc[-1]) < float(sma200)
 
 
-def _scanner_section_html(hits: list[dict], build_date: str) -> str:
+def _scanner_section_html(hits: list[dict], build_date: str, ind_rank_map: dict | None = None) -> str:
     try:
         from data.db import connect as _db_connect
         _tmp = None  # regime check done at render via data already loaded
@@ -854,6 +855,8 @@ def _scanner_section_html(hits: list[dict], build_date: str) -> str:
         "pullback_3d":   "tag-3d",
     }
 
+    _ind_rank = ind_rank_map or {}
+
     if not hits:
         body = '<p class="scanner-empty">No pullback setups today.</p>'
     else:
@@ -871,6 +874,12 @@ def _scanner_section_html(hits: list[dict], build_date: str) -> str:
             dist_ma         = h.get("dist_ma_atr")
             dist_local      = h.get("dist_local_high_atr")
             also_in         = h.get("also_in") or "—"
+
+            # Industry rank from ind_rank_map (keyed by gics_sub_industry)
+            ind_key   = _str(h.get("gics_sub_industry"))
+            ind_rank  = _ind_rank.get(ind_key)  # None if industry not ranked
+            ind_rank_sort = str(ind_rank) if ind_rank is not None else "9999"
+            ind_rank_s    = str(ind_rank) if ind_rank is not None else "—"
 
             rs_s        = f"{rs:.0f}" if rs is not None else "—"
             dist_s      = f"{dist:.1f}%" if dist is not None else "—"
@@ -890,11 +899,13 @@ def _scanner_section_html(hits: list[dict], build_date: str) -> str:
             dist_local_s, dist_local_sort = _atr_s(dist_local)
 
             rows += (
-                f'<tr data-setup="{scanner_id}" data-sector="{sector}" data-industry="{industry}">'
+                f'<tr data-setup="{scanner_id}" data-sector="{sector}"'
+                f' data-industry="{industry}" data-indrank="{ind_rank_sort}">'
                 f'<td><span class="tag {tag_cls}">{tag_label}</span></td>'
                 f'<td><span class="scanner-ticker">{ticker}</span></td>'
                 f'<td><span class="scanner-sector">{sector}</span></td>'
                 f'<td style="font-size:12px;color:#475569">{industry}</td>'
+                f'<td data-sort-value="{ind_rank_sort}" style="font-size:12px;color:#475569">{ind_rank_s}</td>'
                 f'<td data-sort-value="{rs_num}">{rs_s}</td>'
                 f'<td>{perf_s}</td>'
                 f'<td data-sort-value="{dist_ma_sort}" style="font-size:12px">{dist_ma_s}</td>'
@@ -914,6 +925,13 @@ def _scanner_section_html(hits: list[dict], build_date: str) -> str:
   <select id="filterIndustry" class="scanner-filter">
     <option value="">All Industries</option>{ind_opts}
   </select>
+  <select id="filterIndRank" class="scanner-filter">
+    <option value="">All Ranks</option>
+    <option value="5">Top 5</option>
+    <option value="10">Top 10</option>
+    <option value="20">Top 20</option>
+    <option value="30">Top 30</option>
+  </select>
   <span id="hitCounter" class="scanner-counter">{n_hits} hits shown</span>
 </div>"""
 
@@ -925,12 +943,13 @@ def _scanner_section_html(hits: list[dict], build_date: str) -> str:
     <th class="sortable" data-col="1">Ticker</th>
     <th class="sortable" data-col="2">Sector</th>
     <th class="sortable" data-col="3">Industry</th>
-    <th class="sortable" data-col="4">RS Rank</th>
-    <th class="sortable" data-col="5">1M Perf</th>
-    <th class="sortable" data-col="6" title="Signed distance from close to MA (ATR units). + = above MA, − = below.">Dist MA (ATR)</th>
-    <th class="sortable" data-col="7" title="Distance from close to 20-day high (ATR units). 0 = at high, negative = pulled back.">Pullback (ATR)</th>
-    <th class="sortable" data-col="8">Dist 52W High</th>
-    <th class="sortable" data-col="9">Also In</th>
+    <th class="sortable" data-col="4" title="1M median rank of this industry vs. all industries">Ind. Rank</th>
+    <th class="sortable" data-col="5">RS Rank</th>
+    <th class="sortable" data-col="6">1M Perf</th>
+    <th class="sortable" data-col="7" title="Signed distance from close to MA (ATR units). + = above MA, − = below.">Dist MA (ATR)</th>
+    <th class="sortable" data-col="8" title="Distance from close to 20-day high (ATR units). 0 = at high, negative = pulled back.">Pullback (ATR)</th>
+    <th class="sortable" data-col="9">Dist 52W High</th>
+    <th class="sortable" data-col="10">Also In</th>
   </tr></thead>
   <tbody>
 {rows}  </tbody>
@@ -961,18 +980,21 @@ def _scanner_section_html(hits: list[dict], build_date: str) -> str:
     var setup=document.getElementById('filterSetup').value;
     var sector=document.getElementById('filterSector').value;
     var industry=document.getElementById('filterIndustry').value;
+    var maxRank=document.getElementById('filterIndRank').value;
     var shown=0;
     document.querySelectorAll('#scannerTable tbody tr').forEach(function(row){{
+      var rankOk=!maxRank||parseInt(row.dataset.indrank)<=parseInt(maxRank);
       var m=(!setup||row.dataset.setup===setup)&&
              (!sector||row.dataset.sector===sector)&&
-             (!industry||row.dataset.industry===industry);
+             (!industry||row.dataset.industry===industry)&&
+             rankOk;
       row.style.display=m?'':'none';
       if(m) shown++;
     }});
     var ctr=document.getElementById('hitCounter');
     if(ctr) ctr.textContent=shown+' hit'+(shown!==1?'s':'')+' shown';
   }}
-  ['filterSetup','filterSector','filterIndustry'].forEach(function(id){{
+  ['filterSetup','filterSector','filterIndustry','filterIndRank'].forEach(function(id){{
     var el=document.getElementById(id);
     if(el) el.addEventListener('change',applyFilters);
   }});
