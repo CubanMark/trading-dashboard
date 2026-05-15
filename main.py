@@ -46,6 +46,25 @@ def main() -> None:
             log_run(conn, "step0_migration", "ok",
                     f"Deactivated {dot_count} dot-notation tickers")
 
+        # --- Step 0a: one-time backfill — set scanner_label where NULL ---
+        null_labels = conn.execute(
+            "SELECT COUNT(*) FROM scanner_hits WHERE scanner_label IS NULL OR scanner_label = ''"
+        ).fetchone()[0]
+        if null_labels > 0:
+            conn.execute("""
+                UPDATE scanner_hits SET scanner_label = CASE scanner
+                    WHEN 'pullback_ma20' THEN 'MA20 Pullback'
+                    WHEN 'pullback_ma10' THEN 'MA10 Pullback'
+                    WHEN 'pullback_3d'   THEN '3D Pullback'
+                    ELSE scanner
+                END
+                WHERE scanner_label IS NULL OR scanner_label = ''
+            """)
+            conn.commit()
+            logger.info("Step 0a: backfilled scanner_label for %d rows", null_labels)
+            log_run(conn, "step0a_label_backfill", "ok",
+                    f"Backfilled scanner_label for {null_labels} rows")
+
         # --- Step 0b: one-time sector refresh — replace GICS names with Yahoo Finance names ---
         if needs_sector_refresh(conn):
             logger.info("Step 0b: GICS-style sector names detected — refreshing from yfinance.info …")

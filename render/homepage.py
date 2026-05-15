@@ -826,15 +826,24 @@ def _scanner_section_html(hits: list[dict], build_date: str) -> str:
     def _str(v) -> str:
         return str(v) if (v is not None and v == v) else ""  # v==v guards against NaN
 
-    # Build filter options from data
-    setups     = sorted({_str(h.get("scanner_label") or h.get("scanner", "")) for h in hits} - {""})
-    sectors    = sorted({_str(h.get("gics_sector"))    for h in hits if _str(h.get("gics_sector"))} - {""})
-    industries = sorted({_str(h.get("gics_sub_industry")) for h in hits if _str(h.get("gics_sub_industry"))} - {""})
+    # Build filter options from data.
+    # setup option VALUE must equal data-setup (scanner ID), display text is the label.
+    setup_map: dict[str, str] = {}
+    for h in hits:
+        sid = _str(h.get("scanner", ""))
+        lbl = _str(h.get("scanner_label")) or sid
+        if sid:
+            setup_map[sid] = lbl
+    setup_opts = "".join(
+        f'<option value="{sid}">{lbl}</option>'
+        for sid, lbl in sorted(setup_map.items(), key=lambda x: x[1])
+    )
 
     def _opt(val: str) -> str:
         return f'<option value="{val}">{val}</option>'
 
-    setup_opts  = "".join(_opt(s) for s in setups)
+    sectors    = sorted({_str(h.get("gics_sector"))    for h in hits if _str(h.get("gics_sector"))} - {""})
+    industries = sorted({_str(h.get("gics_sub_industry")) for h in hits if _str(h.get("gics_sub_industry"))} - {""})
     sector_opts = "".join(_opt(s) for s in sectors)
     ind_opts    = "".join(_opt(s) for s in industries)
 
